@@ -1,73 +1,145 @@
-# React + TypeScript + Vite
+# 스터디 카페 키오스크 앱
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+스터디 카페에서 키오스크를 대체할 수 있는 풀스택 웹 애플리케이션입니다.
 
-Currently, two official plugins are available:
+## 주요 기능
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### 사용자 기능
+- **회원 가입 및 로그인**: 이메일 기반 인증 시스템
+- **좌석 선택**: 1인석, 2인석, 단체석 중 선택 (총 30석)
+  - 1층: 15석
+  - 2층: 15석
+  - 실시간 좌석 상태 확인 (이용 가능/사용 중/예약됨)
+- **이용권 선택**: 다양한 요금제 제공
+  - 2시간 이용권: 4,000원
+  - 4시간 이용권: 7,000원
+  - 종일 이용권: 15,000원
+  - 주간 이용권: 80,000원
+  - 월간 이용권: 250,000원
+- **결제 시스템**: 카드, 간편결제, 현금 결제 지원
+- **입실/퇴실 관리**: 원활한 입퇴실 프로세스
+- **마이페이지**:
+  - 현재 이용 중인 좌석 및 남은 시간 확인
+  - 과거 이용 내역 조회
 
-## React Compiler
+### 관리자 기능
+- **대시보드**: 스터디 카페 운영 현황 실시간 모니터링
+  - 전체 좌석 현황
+  - 이용 가능/사용 중 좌석 통계
+  - 총 매출 현황
+- **좌석 관리**: 실시간 좌석 상태 확인
+- **세션 관리**: 현재 이용 중인 세션 목록
+- **이용 내역**: 모든 사용자의 이용 기록 조회
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 기술 스택
 
-## Expanding the ESLint configuration
+- **프론트엔드**:
+  - React 18
+  - TypeScript
+  - Vite (빌드 도구)
+  - React Router (라우팅)
+  - Zustand (상태 관리)
+  - Tailwind CSS (스타일링)
+  - React Icons (아이콘)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **상태 관리**:
+  - Zustand with persist middleware
+  - LocalStorage를 통한 데이터 영속화
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 시작하기
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### 설치
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 개발 서버 실행
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run dev
 ```
+
+브라우저에서 `http://localhost:5173`으로 접속
+
+### 빌드
+
+```bash
+npm run build
+```
+
+### 프로덕션 미리보기
+
+```bash
+npm run preview
+```
+
+## 테스트 계정
+
+### 일반 사용자
+- 이메일: hong@example.com
+- 비밀번호: user123
+
+### 관리자
+- 이메일: admin@studycafe.com
+- 비밀번호: admin123
+
+## 프로젝트 구조
+
+```
+study-cafe-kiosk/
+├── src/
+│   ├── components/        # 재사용 가능한 컴포넌트
+│   ├── pages/            # 페이지 컴포넌트
+│   │   ├── HomePage.tsx
+│   │   ├── LoginPage.tsx
+│   │   ├── RegisterPage.tsx
+│   │   ├── SeatSelectPage.tsx
+│   │   ├── TicketSelectPage.tsx
+│   │   ├── PaymentPage.tsx
+│   │   ├── MyPage.tsx
+│   │   └── AdminPage.tsx
+│   ├── store/            # Zustand 상태 관리
+│   │   ├── useAuthStore.ts
+│   │   └── useStudyCafeStore.ts
+│   ├── types/            # TypeScript 타입 정의
+│   │   └── index.ts
+│   ├── App.tsx           # 메인 앱 컴포넌트
+│   └── main.tsx          # 진입점
+├── public/               # 정적 파일
+└── package.json
+```
+
+## 주요 페이지
+
+1. **홈페이지 (`/`)**: 로그인/회원가입 또는 메인 메뉴
+2. **로그인 (`/login`)**: 사용자 로그인
+3. **회원가입 (`/register`)**: 신규 회원 가입
+4. **좌석 선택 (`/seats`)**: 이용 가능한 좌석 선택
+5. **이용권 선택 (`/tickets`)**: 이용권 선택
+6. **결제 (`/payment`)**: 결제 진행
+7. **마이페이지 (`/my-page`)**: 이용 정보 및 내역
+8. **관리자 (`/admin`)**: 관리자 대시보드
+
+## 특징
+
+- **반응형 디자인**: 모바일, 태블릿, 데스크톱 모두 지원
+- **직관적인 UI/UX**: 사용자 친화적인 인터페이스
+- **실시간 업데이트**: 좌석 상태 실시간 반영
+- **데이터 영속화**: LocalStorage를 통한 로그인 상태 및 데이터 유지
+- **Mock 데이터**: 백엔드 없이도 완전히 동작
+
+## 향후 개선 사항
+
+- [ ] 백엔드 API 연동
+- [ ] 실시간 타이머 기능
+- [ ] 푸시 알림 (시간 만료 알림)
+- [ ] 사물함 관리 기능
+- [ ] 음료/간식 주문 시스템
+- [ ] 실제 결제 게이트웨이 연동
+- [ ] 회원권 자동 갱신
+- [ ] 통계 및 리포트 기능
+
+## 라이선스
+
+MIT
