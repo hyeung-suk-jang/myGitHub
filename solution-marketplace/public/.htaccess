@@ -1,0 +1,23 @@
+# 솔루션 마켓 .htaccess
+
+# PHP 설정
+php_flag display_errors Off
+php_value upload_max_filesize 100M
+php_value post_max_size 100M
+php_value max_execution_time 300
+
+# 보안 헤더
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+</IfModule>
+
+# 업로드 디렉토리 PHP 실행 차단
+<Directory "uploads">
+    php_flag engine off
+</Directory>
+
+# 에러 페이지
+ErrorDocument 404 /solution-marketplace/public/index.php
+ErrorDocument 403 /solution-marketplace/public/index.php
