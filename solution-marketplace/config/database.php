@@ -3,11 +3,12 @@
  * 데이터베이스 설정 파일
  */
 
+// PostgreSQL 데이터베이스 설정
 define('DB_HOST', 'localhost');
+define('DB_PORT', '5432'); // PostgreSQL 기본 포트
 define('DB_NAME', 'solution_marketplace');
-define('DB_USER', 'root');
+define('DB_USER', 'postgres');
 define('DB_PASS', '');
-define('DB_CHARSET', 'utf8mb4');
 
 // 에러 리포팅 설정 (개발 환경)
 error_reporting(E_ALL);

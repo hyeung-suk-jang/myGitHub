@@ -40,7 +40,7 @@
 
 - **프론트엔드**: HTML5, CSS3, JavaScript, jQuery
 - **백엔드**: PHP (순수 PHP, 프레임워크 없음)
-- **데이터베이스**: MySQL (MariaDB)
+- **데이터베이스**: PostgreSQL
 - **보안**:
   - Password hashing (bcrypt)
   - XSS 방지 (htmlspecialchars)
@@ -51,27 +51,30 @@
 
 ### 1. 환경 요구사항
 - PHP 7.4 이상
-- MySQL 5.7 이상 또는 MariaDB 10.2 이상
+- PostgreSQL 12 이상
 - Apache 또는 Nginx 웹 서버
+- PHP PostgreSQL 확장 모듈 (php-pgsql)
 - curl 확장 모듈 (SNS 로그인용)
 - GD 라이브러리 (이미지 처리용)
 
 ### 2. 데이터베이스 설정
 
 ```bash
-# MySQL 접속
-mysql -u root -p
+# PostgreSQL 접속
+sudo -u postgres psql
 
 # 데이터베이스 생성
-CREATE DATABASE solution_marketplace CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE solution_marketplace ENCODING 'UTF8';
 
 # 사용자 생성 및 권한 부여
-CREATE USER 'marketplace_user'@'localhost' IDENTIFIED BY 'your_password';
-GRANT ALL PRIVILEGES ON solution_marketplace.* TO 'marketplace_user'@'localhost';
-FLUSH PRIVILEGES;
+CREATE USER marketplace_user WITH PASSWORD 'your_password';
+GRANT ALL PRIVILEGES ON DATABASE solution_marketplace TO marketplace_user;
+
+# 데이터베이스 종료 후 스키마 적용
+\q
 
 # 스키마 적용
-mysql -u root -p solution_marketplace < database/schema.sql
+psql -U marketplace_user -d solution_marketplace -f database/schema.sql
 ```
 
 ### 3. 설정 파일 수정
@@ -80,6 +83,7 @@ mysql -u root -p solution_marketplace < database/schema.sql
 
 ```php
 define('DB_HOST', 'localhost');
+define('DB_PORT', '5432'); // PostgreSQL 기본 포트
 define('DB_NAME', 'solution_marketplace');
 define('DB_USER', 'marketplace_user');
 define('DB_PASS', 'your_password');
