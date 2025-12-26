@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="1인 프리랜서를 위한 전문 개인 브랜딩 사이트">
+    <title>프리랜서 포트폴리오 | 전문가의 브랜딩</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <div class="nav-wrapper">
+                <div class="logo">
+                    <a href="#home">FreelancerPro</a>
+                </div>
+                <ul class="nav-menu" id="nav-menu">
+                    <li><a href="#home" class="nav-link active">홈</a></li>
+                    <li><a href="#about" class="nav-link">소개</a></li>
+                    <li><a href="#services" class="nav-link">서비스</a></li>
+                    <li><a href="#portfolio" class="nav-link">포트폴리오</a></li>
+                    <li><a href="#testimonials" class="nav-link">후기</a></li>
+                    <li><a href="#contact" class="nav-link">문의하기</a></li>
+                </ul>
+                <div class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-overlay"></div>
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title animate-up">
+                    당신의 성공을 위한<br>
+                    <span class="highlight">전문 파트너</span>
+                </h1>
+                <p class="hero-subtitle animate-up delay-1">
+                    1인 사업가와 프리랜서를 위한 최고의 솔루션을 제공합니다
+                </p>
+                <div class="hero-buttons animate-up delay-2">
+                    <a href="#contact" class="btn btn-primary">프로젝트 시작하기</a>
+                    <a href="#portfolio" class="btn btn-secondary">포트폴리오 보기</a>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-down">
+            <a href="#about">
+                <i class="fas fa-chevron-down"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">About Me</h2>
+                <p class="section-subtitle">나를 소개합니다</p>
+            </div>
+            <div class="about-content">
+                <div class="about-image">
+                    <div class="image-wrapper">
+                        <img src="images/profile.jpg" alt="Profile" onerror="this.src='https://via.placeholder.com/400x500?text=Your+Photo'">
+                        <div class="image-overlay"></div>
+                    </div>
+                </div>
+                <div class="about-text">
+                    <h3>전문성과 열정으로 여러분의 비즈니스를 성장시킵니다</h3>
+                    <p>
+                        10년 이상의 경험을 바탕으로 1인 사업가와 프리랜서들의 성공을 돕고 있습니다.
+                        웹 개발, 디자인, 마케팅, 브랜딩 등 다양한 분야에서 전문적인 서비스를 제공합니다.
+                    </p>
+                    <p>
+                        단순히 프로젝트를 완수하는 것을 넘어서, 클라이언트의 비즈니스 목표 달성과
+                        지속 가능한 성장을 위해 최선을 다합니다.
+                    </p>
+                    <div class="about-stats">
+                        <div class="stat-item">
+                            <h4 class="stat-number" data-target="150">0</h4>
+                            <p>완료 프로젝트</p>
+                        </div>
+                        <div class="stat-item">
+                            <h4 class="stat-number" data-target="120">0</h4>
+                            <p>만족한 고객</p>
+                        </div>
+                        <div class="stat-item">
+                            <h4 class="stat-number" data-target="10">0</h4>
+                            <p>경력 연수</p>
+                        </div>
+                        <div class="stat-item">
+                            <h4 class="stat-number" data-target="98">0</h4>
+                            <p>만족도 %</p>
+                        </div>
+                    </div>
+                    <a href="#contact" class="btn btn-primary">함께 일하기</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Services</h2>
+                <p class="section-subtitle">제공하는 서비스</p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3>웹 개발</h3>
+                    <p>최신 기술을 활용한 반응형 웹사이트 및 웹 애플리케이션 개발</p>
+                    <ul class="service-features">
+                        <li>프론트엔드 개발</li>
+                        <li>백엔드 개발</li>
+                        <li>반응형 디자인</li>
+                    </ul>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <h3>UI/UX 디자인</h3>
+                    <p>사용자 경험을 최우선으로 하는 직관적이고 매력적인 디자인</p>
+                    <ul class="service-features">
+                        <li>웹 디자인</li>
+                        <li>모바일 디자인</li>
+                        <li>사용자 경험 설계</li>
+                    </ul>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-bullhorn"></i>
+                    </div>
+                    <h3>디지털 마케팅</h3>
+                    <p>데이터 기반의 효과적인 온라인 마케팅 전략 수립 및 실행</p>
+                    <ul class="service-features">
+                        <li>SEO 최적화</li>
+                        <li>소셜 미디어 마케팅</li>
+                        <li>콘텐츠 마케팅</li>
+                    </ul>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>브랜딩 전략</h3>
+                    <p>차별화된 브랜드 아이덴티티 구축 및 브랜딩 컨설팅</p>
+                    <ul class="service-features">
+                        <li>브랜드 아이덴티티</li>
+                        <li>로고 디자인</li>
+                        <li>브랜드 전략</li>
+                    </ul>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>모바일 앱</h3>
+                    <p>iOS 및 Android 플랫폼을 위한 네이티브 및 하이브리드 앱 개발</p>
+                    <ul class="service-features">
+                        <li>하이브리드 앱</li>
+                        <li>네이티브 앱</li>
+                        <li>앱 유지보수</li>
+                    </ul>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3>컨설팅</h3>
+                    <p>비즈니스 성장을 위한 맞춤형 IT 및 마케팅 컨설팅</p>
+                    <ul class="service-features">
+                        <li>비즈니스 분석</li>
+                        <li>전략 수립</li>
+                        <li>기술 자문</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portfolio Section -->
+    <section id="portfolio" class="portfolio">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Portfolio</h2>
+                <p class="section-subtitle">최근 프로젝트</p>
+            </div>
+            <div class="portfolio-filters">
+                <button class="filter-btn active" data-filter="all">전체</button>
+                <button class="filter-btn" data-filter="web">웹사이트</button>
+                <button class="filter-btn" data-filter="app">앱</button>
+                <button class="filter-btn" data-filter="design">디자인</button>
+                <button class="filter-btn" data-filter="branding">브랜딩</button>
+            </div>
+            <div class="portfolio-grid">
+                <div class="portfolio-item" data-category="web">
+                    <div class="portfolio-image">
+                        <img src="images/project1.jpg" alt="Project 1" onerror="this.src='https://via.placeholder.com/600x400?text=E-Commerce+Website'">
+                        <div class="portfolio-overlay">
+                            <div class="portfolio-content">
+                                <h3>이커머스 플랫폼</h3>
+                                <p>웹사이트</p>
+                                <a href="#" class="portfolio-link"><i class="fas fa-external-link-alt"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="portfolio-item" data-category="app">
+                    <div class="portfolio-image">
+                        <img src="images/project2.jpg" alt="Project 2" onerror="this.src='https://via.placeholder.com/600x400?text=Mobile+App'">
+                        <div class="portfolio-overlay">
+                            <div class="portfolio-content">
+                                <h3>헬스케어 앱</h3>
+                                <p>모바일 앱</p>
+                                <a href="#" class="portfolio-link"><i class="fas fa-external-link-alt"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="portfolio-item" data-category="design">
+                    <div class="portfolio-image">
+                        <img src="images/project3.jpg" alt="Project 3" onerror="this.src='https://via.placeholder.com/600x400?text=UI+Design'">
+                        <div class="portfolio-overlay">
+                            <div class="portfolio-content">
+                                <h3>대시보드 UI</h3>
+                                <p>디자인</p>
+                                <a href="#" class="portfolio-link"><i class="fas fa-external-link-alt"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="portfolio-item" data-category="branding">
+                    <div class="portfolio-image">
+                        <img src="images/project4.jpg" alt="Project 4" onerror="this.src='https://via.placeholder.com/600x400?text=Brand+Identity'">
+                        <div class="portfolio-overlay">
+                            <div class="portfolio-content">
+                                <h3>스타트업 브랜딩</h3>
+                                <p>브랜딩</p>
+                                <a href="#" class="portfolio-link"><i class="fas fa-external-link-alt"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="portfolio-item" data-category="web">
+                    <div class="portfolio-image">
+                        <img src="images/project5.jpg" alt="Project 5" onerror="this.src='https://via.placeholder.com/600x400?text=Corporate+Website'">
+                        <div class="portfolio-overlay">
+                            <div class="portfolio-content">
+                                <h3>기업 웹사이트</h3>
+                                <p>웹사이트</p>
+                                <a href="#" class="portfolio-link"><i class="fas fa-external-link-alt"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="portfolio-item" data-category="design">
+                    <div class="portfolio-image">
+                        <img src="images/project6.jpg" alt="Project 6" onerror="this.src='https://via.placeholder.com/600x400?text=Landing+Page'">
+                        <div class="portfolio-overlay">
+                            <div class="portfolio-content">
+                                <h3>랜딩 페이지</h3>
+                                <p>디자인</p>
+                                <a href="#" class="portfolio-link"><i class="fas fa-external-link-alt"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Testimonials</h2>
+                <p class="section-subtitle">고객 후기</p>
+            </div>
+            <div class="testimonials-slider">
+                <div class="testimonial-item">
+                    <div class="testimonial-content">
+                        <i class="fas fa-quote-left quote-icon"></i>
+                        <p class="testimonial-text">
+                            "전문성과 책임감이 돋보이는 최고의 파트너였습니다.
+                            프로젝트를 기한 내에 완벽하게 완성해주셨고,
+                            세심한 커뮤니케이션 덕분에 매우 만족스러운 결과물을 얻을 수 있었습니다."
+                        </p>
+                        <div class="testimonial-author">
+                            <img src="images/client1.jpg" alt="Client 1" onerror="this.src='https://via.placeholder.com/80x80?text=Client'">
+                            <div class="author-info">
+                                <h4>김민수</h4>
+                                <p>CEO, Tech Startup</p>
+                            </div>
+                        </div>
+                        <div class="testimonial-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-item">
+                    <div class="testimonial-content">
+                        <i class="fas fa-quote-left quote-icon"></i>
+                        <p class="testimonial-text">
+                            "단순히 개발자를 넘어서 비즈니스 파트너로서 함께 고민하고
+                            최적의 솔루션을 제안해주셨습니다. 앞으로도 계속 함께 일하고 싶습니다."
+                        </p>
+                        <div class="testimonial-author">
+                            <img src="images/client2.jpg" alt="Client 2" onerror="this.src='https://via.placeholder.com/80x80?text=Client'">
+                            <div class="author-info">
+                                <h4>이지은</h4>
+                                <p>Founder, E-Commerce</p>
+                            </div>
+                        </div>
+                        <div class="testimonial-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-item">
+                    <div class="testimonial-content">
+                        <i class="fas fa-quote-left quote-icon"></i>
+                        <p class="testimonial-text">
+                            "디자인부터 개발, 마케팅까지 전 과정을 믿고 맡길 수 있었습니다.
+                            덕분에 비즈니스가 크게 성장할 수 있었고, 매출도 3배 이상 증가했습니다."
+                        </p>
+                        <div class="testimonial-author">
+                            <img src="images/client3.jpg" alt="Client 3" onerror="this.src='https://via.placeholder.com/80x80?text=Client'">
+                            <div class="author-info">
+                                <h4>박준호</h4>
+                                <p>Director, Marketing Agency</p>
+                            </div>
+                        </div>
+                        <div class="testimonial-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slider-controls">
+                <button class="slider-btn prev-btn"><i class="fas fa-chevron-left"></i></button>
+                <button class="slider-btn next-btn"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Contact</h2>
+                <p class="section-subtitle">프로젝트 문의하기</p>
+            </div>
+            <div class="contact-wrapper">
+                <div class="contact-info">
+                    <h3>함께 일하고 싶으신가요?</h3>
+                    <p>
+                        새로운 프로젝트에 대해 상담하거나 협업을 원하신다면
+                        언제든지 연락 주세요. 24시간 내에 답변드리겠습니다.
+                    </p>
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="contact-text">
+                                <h4>이메일</h4>
+                                <p>contact@freelancerpro.com</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <div class="contact-text">
+                                <h4>전화</h4>
+                                <p>+82 10-1234-5678</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div class="contact-text">
+                                <h4>주소</h4>
+                                <p>서울시 강남구, 대한민국</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+                <div class="contact-form-wrapper">
+                    <form id="contact-form" class="contact-form" method="POST" action="php/contact.php">
+                        <div class="form-group">
+                            <input type="text" name="name" id="name" class="form-control" placeholder="이름" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" name="email" id="email" class="form-control" placeholder="이메일" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="subject" id="subject" class="form-control" placeholder="제목" required>
+                        </div>
+                        <div class="form-group">
+                            <textarea name="message" id="message" class="form-control" rows="5" placeholder="메시지" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">메시지 보내기</button>
+                        <div id="form-message" class="form-message"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>FreelancerPro</h3>
+                    <p>1인 사업가와 프리랜서를 위한 최고의 파트너</p>
+                </div>
+                <div class="footer-section">
+                    <h4>빠른 링크</h4>
+                    <ul>
+                        <li><a href="#home">홈</a></li>
+                        <li><a href="#about">소개</a></li>
+                        <li><a href="#services">서비스</a></li>
+                        <li><a href="#portfolio">포트폴리오</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>서비스</h4>
+                    <ul>
+                        <li><a href="#services">웹 개발</a></li>
+                        <li><a href="#services">UI/UX 디자인</a></li>
+                        <li><a href="#services">디지털 마케팅</a></li>
+                        <li><a href="#services">브랜딩</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>연락처</h4>
+                    <ul>
+                        <li><i class="fas fa-envelope"></i> contact@freelancerpro.com</li>
+                        <li><i class="fas fa-phone"></i> +82 10-1234-5678</li>
+                        <li><i class="fas fa-map-marker-alt"></i> 서울시 강남구</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 FreelancerPro. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <button id="scroll-top" class="scroll-top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- JavaScript -->
+    <script src="js/main.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Logs
+logs/*.log
+*.log
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Build files
+dist/
+build/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Uploaded files (if any)
+uploads/
+
+# Cache
+cache/
+*.cache
+
+# Backup files
+*.bak
+*.backup
