@@ -1,0 +1,51 @@
+# Apache 설정
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /dev-ebook-platform/
+
+    # www 제거 (선택사항)
+    # RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+    # RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
+
+    # 디렉토리 인덱스
+    DirectoryIndex index.php
+
+    # PHP 에러 표시 (개발 환경)
+    # php_flag display_errors On
+    # php_value error_reporting E_ALL
+
+    # 보안 헤더
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-XSS-Protection "1; mode=block"
+</IfModule>
+
+# 파일 업로드 크기 제한
+php_value upload_max_filesize 50M
+php_value post_max_size 50M
+
+# 세션 설정
+php_value session.cookie_httponly 1
+php_value session.use_strict_mode 1
+
+# Gzip 압축
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
+</IfModule>
+
+# 브라우저 캐싱
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpg "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+</IfModule>
+
+# 민감한 파일 접근 차단
+<FilesMatch "\.(sql|log|ini|md)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
