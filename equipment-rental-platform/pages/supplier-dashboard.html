@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공급자 대시보드 - EquipRent</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo"><a href="../index.html">EquipRent</a></div>
+                <nav>
+                    <ul class="nav">
+                        <li><a href="supplier-dashboard.html">내 장비</a></li>
+                        <li><a href="my-rentals.html">대여 관리</a></li>
+                        <li><a href="renter-dashboard.html">장비 검색</a></li>
+                    </ul>
+                </nav>
+                <div class="nav-actions">
+                    <div id="user-menu"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container" style="margin-top: 2rem; margin-bottom: 3rem;">
+        <div class="d-flex justify-between align-center mb-3">
+            <h1>내 장비 관리</h1>
+            <button class="btn btn-primary" onclick="openModal('addEquipmentModal')">
+                + 장비 등록
+            </button>
+        </div>
+
+        <!-- 장비 목록 -->
+        <div id="myEquipmentList"></div>
+    </div>
+
+    <!-- 장비 등록 모달 -->
+    <div class="modal-overlay" id="addEquipmentModal">
+        <div class="modal" style="max-width: 700px;">
+            <div class="modal-header">
+                <h3 class="modal-title">장비 등록</h3>
+                <button class="modal-close" onclick="closeModal('addEquipmentModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addEquipmentForm">
+                    <div class="grid grid-2">
+                        <div class="form-group">
+                            <label class="form-label">장비명 *</label>
+                            <input type="text" class="form-control" id="equipmentName" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">브랜드</label>
+                            <input type="text" class="form-control" id="brand">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-2">
+                        <div class="form-group">
+                            <label class="form-label">모델명</label>
+                            <input type="text" class="form-control" id="modelName">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">시리얼 번호</label>
+                            <input type="text" class="form-control" id="serialNumber">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-2">
+                        <div class="form-group">
+                            <label class="form-label">카테고리</label>
+                            <select class="form-control" id="categoryId">
+                                <option value="">선택하세요</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">상태 등급 *</label>
+                            <select class="form-control" id="conditionGrade" required>
+                                <option value="S">S급 (최상)</option>
+                                <option value="A" selected>A급 (상)</option>
+                                <option value="B">B급 (중)</option>
+                                <option value="C">C급 (하)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-2">
+                        <div class="form-group">
+                            <label class="form-label">1일 대여료 (원) *</label>
+                            <input type="number" class="form-control" id="dailyRate" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">보증금 (원) *</label>
+                            <input type="number" class="form-control" id="depositAmount" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">구매 가격 (원)</label>
+                        <input type="number" class="form-control" id="purchasePrice">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">위치</label>
+                        <input type="text" class="form-control" id="location" placeholder="예: 서울시 강남구">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">설명</label>
+                        <textarea class="form-control" id="description" rows="4"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('addEquipmentModal')">취소</button>
+                <button class="btn btn-primary" id="submitEquipmentBtn" onclick="submitEquipment()">등록</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/main.js"></script>
+    <script>
+        let categories = [];
+
+        $(document).ready(async function() {
+            if (!await requireAuth()) return;
+            await updateUserMenu();
+            await loadCategories();
+            await loadMyEquipment();
+        });
+
+        async function loadCategories() {
+            try {
+                const result = await api.get('equipment.php?action=categories');
+                if (result.success) {
+                    categories = result.data.categories;
+                    const $select = $('#categoryId');
+                    categories.forEach(cat => {
+                        $select.append(`<option value="${cat.category_id}">${cat.category_name}</option>`);
+                    });
+                }
+            } catch (error) {
+                console.error('Load categories error:', error);
+            }
+        }
+
+        async function loadMyEquipment() {
+            try {
+                const result = await api.get('equipment.php?action=my-equipment');
+                if (result.success) {
+                    displayMyEquipment(result.data.equipment);
+                }
+            } catch (error) {
+                console.error('Load my equipment error:', error);
+                showAlert('장비 목록을 불러오는 중 오류가 발생했습니다.', 'error');
+            }
+        }
+
+        function displayMyEquipment(equipment) {
+            const $list = $('#myEquipmentList');
+            $list.empty();
+
+            if (equipment.length === 0) {
+                $list.html(`
+                    <div class="card text-center" style="padding: 3rem;">
+                        <p class="text-secondary">등록된 장비가 없습니다.</p>
+                        <button class="btn btn-primary mt-2" onclick="openModal('addEquipmentModal')">첫 장비 등록하기</button>
+                    </div>
+                `);
+                return;
+            }
+
+            const table = `
+                <div class="card">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>장비명</th>
+                                <th>브랜드/모델</th>
+                                <th>등급</th>
+                                <th>1일 대여료</th>
+                                <th>상태</th>
+                                <th>평점</th>
+                                <th>대여횟수</th>
+                                <th>관리</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${equipment.map(item => `
+                                <tr>
+                                    <td>${item.equipment_name}</td>
+                                    <td>${item.brand || '-'} ${item.model_name || ''}</td>
+                                    <td>${getGradeBadge(item.condition_grade)}</td>
+                                    <td>${formatNumber(item.daily_rate)}원</td>
+                                    <td>${getStatusBadge(item.status, 'equipment')}</td>
+                                    <td>${item.average_rating > 0 ? renderStars(parseFloat(item.average_rating)) : '-'}</td>
+                                    <td>${item.total_rental_count}회</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline" onclick="editEquipment(${item.equipment_id})">수정</button>
+                                        <button class="btn btn-sm btn-danger" onclick="deleteEquipment(${item.equipment_id})">삭제</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            $list.html(table);
+        }
+
+        async function submitEquipment() {
+            const data = {
+                equipment_name: $('#equipmentName').val().trim(),
+                brand: $('#brand').val().trim(),
+                model_name: $('#modelName').val().trim(),
+                serial_number: $('#serialNumber').val().trim(),
+                category_id: $('#categoryId').val() || null,
+                condition_grade: $('#conditionGrade').val(),
+                daily_rate: parseFloat($('#dailyRate').val()),
+                deposit_amount: parseFloat($('#depositAmount').val()),
+                purchase_price: parseFloat($('#purchasePrice').val()) || null,
+                location: $('#location').val().trim(),
+                description: $('#description').val().trim()
+            };
+
+            if (!data.equipment_name || !data.daily_rate || !data.deposit_amount) {
+                showAlert('필수 항목을 모두 입력해주세요.', 'error');
+                return;
+            }
+
+            showLoading('submitEquipmentBtn');
+
+            try {
+                const result = await api.post('equipment.php?action=create', data);
+                if (result.success) {
+                    showAlert('장비가 등록되었습니다!', 'success');
+                    closeModal('addEquipmentModal');
+                    $('#addEquipmentForm')[0].reset();
+                    await loadMyEquipment();
+                } else {
+                    showAlert(result.error || '장비 등록에 실패했습니다.', 'error');
+                }
+            } catch (error) {
+                console.error('Submit equipment error:', error);
+                showAlert('장비 등록 중 오류가 발생했습니다.', 'error');
+            } finally {
+                hideLoading('submitEquipmentBtn');
+            }
+        }
+
+        function editEquipment(equipmentId) {
+            showAlert('장비 수정 기능은 곧 추가됩니다.', 'info');
+        }
+
+        async function deleteEquipment(equipmentId) {
+            if (!window.confirm('정말 이 장비를 삭제하시겠습니까?')) return;
+
+            try {
+                const result = await api.delete(`equipment.php?action=delete&id=${equipmentId}`);
+                if (result.success) {
+                    showAlert('장비가 삭제되었습니다.', 'success');
+                    await loadMyEquipment();
+                } else {
+                    showAlert(result.error || '장비 삭제에 실패했습니다.', 'error');
+                }
+            } catch (error) {
+                console.error('Delete equipment error:', error);
+                showAlert('장비 삭제 중 오류가 발생했습니다.', 'error');
+            }
+        }
+    </script>
+</body>
+</html>

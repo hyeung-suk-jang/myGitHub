@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>대여 내역 - EquipRent</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo"><a href="../index.html">EquipRent</a></div>
+                <nav>
+                    <ul class="nav">
+                        <li><a href="equipment-list.html">장비 검색</a></li>
+                        <li><a href="renter-dashboard.html">대여 내역</a></li>
+                        <li><a href="supplier-dashboard.html">내 장비</a></li>
+                    </ul>
+                </nav>
+                <div class="nav-actions">
+                    <div id="user-menu"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container" style="margin-top: 2rem; margin-bottom: 3rem;">
+        <h1 class="mb-3">나의 대여 내역</h1>
+
+        <div class="mb-3">
+            <button class="btn btn-outline btn-sm" onclick="loadMyRentals('renter')" id="renterTab">내가 빌린 장비</button>
+            <button class="btn btn-outline btn-sm" onclick="loadMyRentals('owner')" id="ownerTab">내가 빌려준 장비</button>
+        </div>
+
+        <!-- 대여 목록 -->
+        <div id="rentalsList"></div>
+    </div>
+
+    <script src="../js/main.js"></script>
+    <script>
+        let currentType = 'renter';
+
+        $(document).ready(async function() {
+            if (!await requireAuth()) return;
+            await updateUserMenu();
+            await loadMyRentals('renter');
+        });
+
+        async function loadMyRentals(type = 'renter') {
+            currentType = type;
+
+            // 탭 활성화
+            $('#renterTab, #ownerTab').removeClass('btn-primary').addClass('btn-outline');
+            $(`#${type}Tab`).removeClass('btn-outline').addClass('btn-primary');
+
+            try {
+                const result = await api.get('rental.php?action=my-rentals', { type });
+                if (result.success) {
+                    displayRentals(result.data.rentals, type);
+                }
+            } catch (error) {
+                console.error('Load my rentals error:', error);
+                showAlert('대여 내역을 불러오는 중 오류가 발생했습니다.', 'error');
+            }
+        }
+
+        function displayRentals(rentals, type) {
+            const $list = $('#rentalsList');
+            $list.empty();
+
+            if (rentals.length === 0) {
+                $list.html(`
+                    <div class="card text-center" style="padding: 3rem;">
+                        <p class="text-secondary">${type === 'renter' ? '대여 내역이 없습니다.' : '빌려준 장비가 없습니다.'}</p>
+                        <a href="equipment-list.html" class="btn btn-primary mt-2">장비 둘러보기</a>
+                    </div>
+                `);
+                return;
+            }
+
+            const table = `
+                <div class="card">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>장비명</th>
+                                <th>${type === 'renter' ? '소유자' : '대여자'}</th>
+                                <th>대여 기간</th>
+                                <th>대여료</th>
+                                <th>상태</th>
+                                <th>결제상태</th>
+                                <th>관리</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${rentals.map(rental => `
+                                <tr>
+                                    <td>
+                                        ${rental.equipment_name}
+                                        ${rental.equipment_image ? `<br><small class="text-secondary">${rental.model_name || ''}</small>` : ''}
+                                    </td>
+                                    <td>${rental.counterpart_name}</td>
+                                    <td>
+                                        ${formatDate(rental.start_date)} ~ ${formatDate(rental.end_date)}
+                                        <br><small class="text-secondary">${rental.total_days}일</small>
+                                    </td>
+                                    <td>${formatNumber(rental.rental_fee)}원</td>
+                                    <td>${getStatusBadge(rental.status, 'rental')}</td>
+                                    <td>${getStatusBadge(rental.payment_status, 'payment')}</td>
+                                    <td>
+                                        ${getActionButtons(rental, type)}
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            $list.html(table);
+        }
+
+        function getActionButtons(rental, type) {
+            let buttons = [];
+
+            if (type === 'owner') {
+                // 공급자 액션
+                if (rental.status === 'pending') {
+                    buttons.push(`<button class="btn btn-sm btn-success" onclick="approveRental(${rental.rental_id})">승인</button>`);
+                    buttons.push(`<button class="btn btn-sm btn-danger" onclick="rejectRental(${rental.rental_id})">거절</button>`);
+                } else if (rental.status === 'active') {
+                    buttons.push(`<button class="btn btn-sm btn-primary" onclick="confirmReturn(${rental.rental_id})">반납 확인</button>`);
+                }
+            } else {
+                // 대여자 액션
+                if (rental.status === 'pending') {
+                    buttons.push(`<button class="btn btn-sm btn-danger" onclick="cancelRental(${rental.rental_id})">취소</button>`);
+                } else if (rental.status === 'approved' && rental.payment_status === 'unpaid') {
+                    buttons.push(`<button class="btn btn-sm btn-primary" onclick="payRental(${rental.rental_id})">결제</button>`);
+                } else if (rental.status === 'completed') {
+                    buttons.push(`<button class="btn btn-sm btn-outline" onclick="writeReview(${rental.rental_id})">리뷰 작성</button>`);
+                }
+            }
+
+            return buttons.join(' ') || '-';
+        }
+
+        async function approveRental(rentalId) {
+            if (!window.confirm('이 대여를 승인하시겠습니까?')) return;
+
+            try {
+                const result = await api.put('rental.php?action=approve', { rental_id: rentalId });
+                if (result.success) {
+                    showAlert('대여가 승인되었습니다.', 'success');
+                    await loadMyRentals(currentType);
+                } else {
+                    showAlert(result.error || '승인에 실패했습니다.', 'error');
+                }
+            } catch (error) {
+                console.error('Approve rental error:', error);
+                showAlert('승인 중 오류가 발생했습니다.', 'error');
+            }
+        }
+
+        async function rejectRental(rentalId) {
+            const reason = prompt('거절 사유를 입력해주세요:');
+            if (!reason) return;
+
+            try {
+                const result = await api.put('rental.php?action=reject', {
+                    rental_id: rentalId,
+                    reason
+                });
+                if (result.success) {
+                    showAlert('대여가 거절되었습니다.', 'success');
+                    await loadMyRentals(currentType);
+                } else {
+                    showAlert(result.error || '거절에 실패했습니다.', 'error');
+                }
+            } catch (error) {
+                console.error('Reject rental error:', error);
+                showAlert('거절 중 오류가 발생했습니다.', 'error');
+            }
+        }
+
+        async function cancelRental(rentalId) {
+            if (!window.confirm('이 대여를 취소하시겠습니까?')) return;
+
+            try {
+                const result = await api.put('rental.php?action=cancel', { rental_id: rentalId });
+                if (result.success) {
+                    showAlert('대여가 취소되었습니다.', 'success');
+                    await loadMyRentals(currentType);
+                } else {
+                    showAlert(result.error || '취소에 실패했습니다.', 'error');
+                }
+            } catch (error) {
+                console.error('Cancel rental error:', error);
+                showAlert('취소 중 오류가 발생했습니다.', 'error');
+            }
+        }
+
+        async function confirmReturn(rentalId) {
+            if (!window.confirm('반납을 확인하시겠습니까?')) return;
+
+            try {
+                const result = await api.put('rental.php?action=confirm-return', { rental_id: rentalId });
+                if (result.success) {
+                    showAlert('반납이 확인되었습니다.', 'success');
+                    await loadMyRentals(currentType);
+                } else {
+                    showAlert(result.error || '반납 확인에 실패했습니다.', 'error');
+                }
+            } catch (error) {
+                console.error('Confirm return error:', error);
+                showAlert('반납 확인 중 오류가 발생했습니다.', 'error');
+            }
+        }
+
+        function payRental(rentalId) {
+            showAlert('결제 기능은 곧 추가됩니다. (PG사 연동 필요)', 'info');
+        }
+
+        function writeReview(rentalId) {
+            showAlert('리뷰 작성 기능은 곧 추가됩니다.', 'info');
+        }
+    </script>
+</body>
+</html>

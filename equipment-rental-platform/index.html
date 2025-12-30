@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EquipRent - 고가 장비 대여 플랫폼</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <!-- 헤더 -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">EquipRent</div>
+                <nav>
+                    <ul class="nav">
+                        <li><a href="index.html">홈</a></li>
+                        <li><a href="pages/equipment-list.html">장비 검색</a></li>
+                        <li><a href="#how-it-works">이용 방법</a></li>
+                        <li><a href="#about">소개</a></li>
+                    </ul>
+                </nav>
+                <div class="nav-actions">
+                    <div id="user-menu"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 히어로 섹션 -->
+    <section style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 5rem 0;">
+        <div class="container text-center">
+            <h1 style="font-size: 3rem; margin-bottom: 1.5rem;">고가 장비를 안전하게 대여하세요</h1>
+            <p style="font-size: 1.25rem; margin-bottom: 2rem; opacity: 0.9;">
+                전문 장비를 필요한 만큼만 빌려 쓰고, 보유한 장비로 수익을 창출하세요
+            </p>
+            <div class="d-flex justify-center gap-2">
+                <a href="pages/equipment-list.html" class="btn btn-lg" style="background: white; color: #667eea;">장비 둘러보기</a>
+                <a href="pages/supplier-dashboard.html" class="btn btn-lg btn-outline" style="border-color: white; color: white;">장비 등록하기</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 특징 섹션 -->
+    <section style="padding: 4rem 0;">
+        <div class="container">
+            <h2 class="text-center mb-4" style="font-size: 2rem;">왜 EquipRent를 선택해야 하나요?</h2>
+            <div class="grid grid-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">🔒</div>
+                        <h3 style="margin-bottom: 1rem;">안전한 거래</h3>
+                        <p class="text-secondary">
+                            에스크로 결제 시스템과 보증금 제도로 안전한 거래를 보장합니다.
+                            신원 인증을 통해 신뢰할 수 있는 사용자만 이용할 수 있습니다.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card text-center">
+                    <div class="card-body">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">📸</div>
+                        <h3 style="margin-bottom: 1rem;">투명한 검수</h3>
+                        <p class="text-secondary">
+                            대여 전후 상태를 사진으로 기록하여 분쟁을 방지합니다.
+                            상세한 검수 리포트로 장비 상태를 명확하게 확인할 수 있습니다.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card text-center">
+                    <div class="card-body">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">💰</div>
+                        <h3 style="margin-bottom: 1rem;">정확한 정산</h3>
+                        <p class="text-secondary">
+                            투명한 수수료 정책과 자동 정산 시스템으로
+                            공급자는 정확한 수익을 빠르게 받을 수 있습니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 인기 장비 카테고리 -->
+    <section style="background: var(--light-color); padding: 4rem 0;">
+        <div class="container">
+            <h2 class="text-center mb-4" style="font-size: 2rem;">인기 카테고리</h2>
+            <div class="grid grid-4">
+                <a href="pages/equipment-list.html?category=1" class="card equipment-card">
+                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 2rem; color: white; text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 0.5rem;">📷</div>
+                        <h3>카메라 & 영상</h3>
+                    </div>
+                </a>
+
+                <a href="pages/equipment-list.html?category=2" class="card equipment-card">
+                    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 2rem; color: white; text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 0.5rem;">🎵</div>
+                        <h3>음향 장비</h3>
+                    </div>
+                </a>
+
+                <a href="pages/equipment-list.html?category=4" class="card equipment-card">
+                    <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); padding: 2rem; color: white; text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 0.5rem;">🚁</div>
+                        <h3>드론</h3>
+                    </div>
+                </a>
+
+                <a href="pages/equipment-list.html?category=5" class="card equipment-card">
+                    <div style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); padding: 2rem; color: white; text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 0.5rem;">💻</div>
+                        <h3>IT 장비</h3>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 이용 방법 -->
+    <section id="how-it-works" style="padding: 4rem 0;">
+        <div class="container">
+            <h2 class="text-center mb-4" style="font-size: 2rem;">이용 방법</h2>
+
+            <div class="mb-4">
+                <h3 style="margin-bottom: 2rem; color: var(--primary-color);">장비를 빌리고 싶다면</h3>
+                <div class="grid grid-4">
+                    <div class="text-center">
+                        <div style="width: 60px; height: 60px; background: var(--primary-color); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; margin: 0 auto 1rem;">1</div>
+                        <h4 style="margin-bottom: 0.5rem;">검색</h4>
+                        <p class="text-secondary">필요한 장비를 검색하고 상세 정보를 확인하세요</p>
+                    </div>
+                    <div class="text-center">
+                        <div style="width: 60px; height: 60px; background: var(--primary-color); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; margin: 0 auto 1rem;">2</div>
+                        <h4 style="margin-bottom: 0.5rem;">예약</h4>
+                        <p class="text-secondary">대여 기간을 선택하고 예약 신청을 보내세요</p>
+                    </div>
+                    <div class="text-center">
+                        <div style="width: 60px; height: 60px; background: var(--primary-color); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; margin: 0 auto 1rem;">3</div>
+                        <h4 style="margin-bottom: 0.5rem;">결제</h4>
+                        <p class="text-secondary">에스크로 결제로 안전하게 대여료와 보증금을 지불하세요</p>
+                    </div>
+                    <div class="text-center">
+                        <div style="width: 60px; height: 60px; background: var(--primary-color); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; margin: 0 auto 1rem;">4</div>
+                        <h4 style="margin-bottom: 0.5rem;">사용 & 반납</h4>
+                        <p class="text-secondary">장비를 사용하고 기한 내 반납하세요</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <h3 style="margin-bottom: 2rem; color: var(--secondary-color);">장비로 수익을 내고 싶다면</h3>
+                <div class="grid grid-4">
+                    <div class="text-center">
+                        <div style="width: 60px; height: 60px; background: var(--secondary-color); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; margin: 0 auto 1rem;">1</div>
+                        <h4 style="margin-bottom: 0.5rem;">등록</h4>
+                        <p class="text-secondary">보유한 장비의 정보와 사진을 등록하세요</p>
+                    </div>
+                    <div class="text-center">
+                        <div style="width: 60px; height: 60px; background: var(--secondary-color); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; margin: 0 auto 1rem;">2</div>
+                        <h4 style="margin-bottom: 0.5rem;">승인</h4>
+                        <p class="text-secondary">대여 신청을 검토하고 승인하세요</p>
+                    </div>
+                    <div class="text-center">
+                        <div style="width: 60px; height: 60px; background: var(--secondary-color); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; margin: 0 auto 1rem;">3</div>
+                        <h4 style="margin-bottom: 0.5rem;">검수</h4>
+                        <p class="text-secondary">대여 전후 장비 상태를 사진으로 기록하세요</p>
+                    </div>
+                    <div class="text-center">
+                        <div style="width: 60px; height: 60px; background: var(--secondary-color); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; margin: 0 auto 1rem;">4</div>
+                        <h4 style="margin-bottom: 0.5rem;">정산</h4>
+                        <p class="text-secondary">수익을 확인하고 출금 신청하세요</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA 섹션 -->
+    <section style="background: var(--primary-color); color: white; padding: 4rem 0;">
+        <div class="container text-center">
+            <h2 style="font-size: 2rem; margin-bottom: 1rem;">지금 바로 시작하세요</h2>
+            <p style="font-size: 1.125rem; margin-bottom: 2rem; opacity: 0.9;">
+                EquipRent에서 필요한 장비를 찾거나 보유한 장비로 수익을 창출하세요
+            </p>
+            <a href="pages/register.html" class="btn btn-lg" style="background: white; color: var(--primary-color);">무료 회원가입</a>
+        </div>
+    </section>
+
+    <!-- 푸터 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>EquipRent</h3>
+                    <p>고가 장비 대여 플랫폼</p>
+                </div>
+                <div class="footer-section">
+                    <h3>서비스</h3>
+                    <ul>
+                        <li><a href="pages/equipment-list.html">장비 검색</a></li>
+                        <li><a href="pages/supplier-dashboard.html">장비 등록</a></li>
+                        <li><a href="#how-it-works">이용 방법</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>고객 지원</h3>
+                    <ul>
+                        <li><a href="#">자주 묻는 질문</a></li>
+                        <li><a href="#">고객센터</a></li>
+                        <li><a href="#">이용약관</a></li>
+                        <li><a href="#">개인정보처리방침</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>문의</h3>
+                    <p>Email: support@equiprent.com</p>
+                    <p>Tel: 02-1234-5678</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 EquipRent. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        // 페이지 로드 시 사용자 메뉴 표시
+        $(document).ready(function() {
+            updateUserMenu();
+        });
+    </script>
+</body>
+</html>

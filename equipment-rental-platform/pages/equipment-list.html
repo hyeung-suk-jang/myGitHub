@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>장비 검색 - EquipRent</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo"><a href="../index.html">EquipRent</a></div>
+                <nav>
+                    <ul class="nav">
+                        <li><a href="../index.html">홈</a></li>
+                        <li><a href="equipment-list.html">장비 검색</a></li>
+                    </ul>
+                </nav>
+                <div class="nav-actions">
+                    <div id="user-menu"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container" style="margin-top: 2rem; margin-bottom: 3rem;">
+        <h1 class="mb-3">장비 검색</h1>
+
+        <!-- 검색 필터 -->
+        <div class="filter-section">
+            <div class="filter-row">
+                <div class="filter-item">
+                    <label class="form-label">검색어</label>
+                    <input type="text" class="form-control" id="searchKeyword" placeholder="장비명, 모델명, 브랜드">
+                </div>
+                <div class="filter-item">
+                    <label class="form-label">카테고리</label>
+                    <select class="form-control" id="categoryFilter">
+                        <option value="">전체</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label class="form-label">상태</label>
+                    <select class="form-control" id="conditionFilter">
+                        <option value="">전체</option>
+                        <option value="S">S급 (최상)</option>
+                        <option value="A">A급 (상)</option>
+                        <option value="B">B급 (중)</option>
+                        <option value="C">C급 (하)</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label class="form-label">정렬</label>
+                    <select class="form-control" id="sortFilter">
+                        <option value="created_at:DESC">최신순</option>
+                        <option value="daily_rate:ASC">가격 낮은 순</option>
+                        <option value="daily_rate:DESC">가격 높은 순</option>
+                        <option value="average_rating:DESC">평점 높은 순</option>
+                    </select>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 1rem;">
+                <button class="btn btn-primary" onclick="searchEquipment()">검색</button>
+                <button class="btn btn-outline" onclick="resetFilters()">초기화</button>
+            </div>
+        </div>
+
+        <!-- 장비 목록 -->
+        <div id="equipmentList" class="grid grid-3"></div>
+
+        <!-- 페이지네이션 -->
+        <div id="pagination"></div>
+    </div>
+
+    <script src="../js/main.js"></script>
+    <script>
+        let currentPage = 1;
+        let categories = [];
+
+        $(document).ready(async function() {
+            await updateUserMenu();
+            await loadCategories();
+            await searchEquipment();
+        });
+
+        async function loadCategories() {
+            try {
+                const result = await api.get('equipment.php?action=categories');
+                if (result.success) {
+                    categories = result.data.categories;
+                    const $select = $('#categoryFilter');
+                    categories.forEach(cat => {
+                        $select.append(`<option value="${cat.category_id}">${cat.category_name}</option>`);
+                    });
+                }
+            } catch (error) {
+                console.error('Load categories error:', error);
+            }
+        }
+
+        async function searchEquipment(page = 1) {
+            currentPage = page;
+            const keyword = $('#searchKeyword').val().trim();
+            const categoryId = $('#categoryFilter').val();
+            const condition = $('#conditionFilter').val();
+            const [sortBy, sortOrder] = $('#sortFilter').val().split(':');
+
+            const params = {
+                page,
+                limit: 12,
+                search: keyword,
+                category_id: categoryId,
+                condition,
+                sort: sortBy,
+                order: sortOrder
+            };
+
+            try {
+                const result = await api.get('equipment.php?action=list', params);
+                if (result.success) {
+                    displayEquipment(result.data.equipment);
+                    displayPagination(result.data.pagination);
+                }
+            } catch (error) {
+                console.error('Search equipment error:', error);
+                showAlert('장비 검색 중 오류가 발생했습니다.', 'error');
+            }
+        }
+
+        function displayEquipment(equipment) {
+            const $list = $('#equipmentList');
+            $list.empty();
+
+            if (equipment.length === 0) {
+                $list.html('<div class="text-center" style="grid-column: 1 / -1; padding: 3rem;"><p class="text-secondary">검색 결과가 없습니다.</p></div>');
+                return;
+            }
+
+            equipment.forEach(item => {
+                const imageUrl = getImageUrl(item.primary_image);
+                const card = `
+                    <div class="card equipment-card" onclick="viewEquipment(${item.equipment_id})">
+                        <img src="${imageUrl}" alt="${item.equipment_name}" class="equipment-image">
+                        <div class="equipment-info">
+                            <div class="equipment-title">${item.equipment_name}</div>
+                            <div class="equipment-meta">
+                                ${item.brand || ''} ${item.model_name || ''}
+                            </div>
+                            <div class="equipment-meta">
+                                ${getGradeBadge(item.condition_grade)}
+                                ${item.location ? '📍 ' + item.location : ''}
+                            </div>
+                            ${item.average_rating > 0 ? `<div class="equipment-meta">${renderStars(parseFloat(item.average_rating))}</div>` : ''}
+                            <div class="equipment-price">
+                                ${formatNumber(item.daily_rate)}원
+                                <span class="equipment-price-label">/일</span>
+                            </div>
+                            <div class="text-secondary" style="font-size: 0.75rem; margin-top: 0.25rem;">
+                                보증금: ${formatNumber(item.deposit_amount)}원
+                            </div>
+                        </div>
+                    </div>
+                `;
+                $list.append(card);
+            });
+        }
+
+        function displayPagination(pagination) {
+            const $pagination = $('#pagination');
+            $pagination.html(renderPagination(pagination, 'searchEquipment'));
+        }
+
+        function viewEquipment(equipmentId) {
+            window.location.href = `equipment-detail.html?id=${equipmentId}`;
+        }
+
+        function resetFilters() {
+            $('#searchKeyword').val('');
+            $('#categoryFilter').val('');
+            $('#conditionFilter').val('');
+            $('#sortFilter').val('created_at:DESC');
+            searchEquipment(1);
+        }
+    </script>
+</body>
+</html>
