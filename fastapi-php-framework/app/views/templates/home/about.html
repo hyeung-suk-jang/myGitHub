@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ title }}</h1>
+
+<div style="margin-top: 2rem;">
+    <h2>FastAPI PHP Framework란?</h2>
+    <p style="margin-top: 1rem; line-height: 1.8;">
+        FastAPI PHP Framework는 PHP 프레임워크(Laravel, CodeIgniter 등)의 익숙한 구조를
+        FastAPI로 구현한 웹 애플리케이션 프레임워크입니다.
+    </p>
+
+    <h2 style="margin-top: 2rem;">주요 구성요소</h2>
+    <ul style="margin-top: 1rem; margin-left: 2rem; line-height: 2;">
+        <li><strong>Controllers:</strong> 요청을 처리하는 컨트롤러</li>
+        <li><strong>Models:</strong> 데이터베이스 모델 (SQLAlchemy)</li>
+        <li><strong>Schemas:</strong> 데이터 검증 스키마 (Pydantic)</li>
+        <li><strong>Routes:</strong> 라우팅 정의</li>
+        <li><strong>Core:</strong> 프레임워크 핵심 기능</li>
+        <li><strong>Config:</strong> 애플리케이션 설정</li>
+    </ul>
+
+    <h2 style="margin-top: 2rem;">기술 스택</h2>
+    <ul style="margin-top: 1rem; margin-left: 2rem; line-height: 2;">
+        <li>FastAPI - 고성능 웹 프레임워크</li>
+        <li>SQLAlchemy - ORM</li>
+        <li>Pydantic - 데이터 검증</li>
+        <li>Jinja2 - 템플릿 엔진</li>
+        <li>Uvicorn - ASGI 서버</li>
+    </ul>
+</div>
+{% endblock %}

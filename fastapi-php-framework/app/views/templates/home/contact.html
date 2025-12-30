@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ title }}</h1>
+
+<div style="margin-top: 2rem; max-width: 600px;">
+    <p style="margin-bottom: 2rem; line-height: 1.8;">
+        프로젝트에 대한 문의사항이 있으시면 아래 정보를 통해 연락주세요.
+    </p>
+
+    <div style="background: #ecf0f1; padding: 2rem; border-radius: 8px;">
+        <h2 style="margin-bottom: 1rem;">Contact Information</h2>
+        <p style="line-height: 2;">
+            <strong>Email:</strong> contact@example.com<br>
+            <strong>GitHub:</strong> <a href="https://github.com" style="color: #3498db;">github.com/your-repo</a><br>
+            <strong>Documentation:</strong> <a href="/api/docs" style="color: #3498db;">API Docs</a>
+        </p>
+    </div>
+
+    <div style="margin-top: 2rem; padding: 1.5rem; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px;">
+        <h3 style="margin-bottom: 0.5rem;">💡 참고</h3>
+        <p>
+            이 프레임워크는 학습 및 개발 목적으로 만들어졌습니다.
+            프로덕션 환경에서 사용하기 전에 충분한 테스트를 거쳐주세요.
+        </p>
+    </div>
+</div>
+{% endblock %}

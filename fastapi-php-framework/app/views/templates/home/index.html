@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="text-align: center; padding: 3rem 0;">
+    <h1 style="font-size: 3rem; margin-bottom: 1rem; color: #2c3e50;">{{ title }}</h1>
+    <p style="font-size: 1.2rem; color: #666; margin-bottom: 2rem;">{{ message }}</p>
+
+    <div style="margin: 3rem 0;">
+        <h2 style="margin-bottom: 1rem;">특징</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-top: 2rem;">
+            <div style="padding: 1.5rem; background: #ecf0f1; border-radius: 8px;">
+                <h3 style="color: #3498db; margin-bottom: 0.5rem;">🚀 PHP 스타일 구조</h3>
+                <p>Laravel, CodeIgniter와 유사한 디렉토리 구조</p>
+            </div>
+            <div style="padding: 1.5rem; background: #ecf0f1; border-radius: 8px;">
+                <h3 style="color: #3498db; margin-bottom: 0.5rem;">⚡ FastAPI 성능</h3>
+                <p>비동기 처리와 높은 성능</p>
+            </div>
+            <div style="padding: 1.5rem; background: #ecf0f1; border-radius: 8px;">
+                <h3 style="color: #3498db; margin-bottom: 0.5rem;">📝 MVC 패턴</h3>
+                <p>Model-View-Controller 아키텍처</p>
+            </div>
+            <div style="padding: 1.5rem; background: #ecf0f1; border-radius: 8px;">
+                <h3 style="color: #3498db; margin-bottom: 0.5rem;">🔒 타입 안전성</h3>
+                <p>Pydantic 스키마를 통한 데이터 검증</p>
+            </div>
+        </div>
+    </div>
+
+    <div style="margin-top: 3rem;">
+        <a href="/api/docs" class="btn" style="margin-right: 1rem;">API 문서 보기</a>
+        <a href="/about" class="btn" style="background-color: #2ecc71;">더 알아보기</a>
+    </div>
+</div>
+{% endblock %}
