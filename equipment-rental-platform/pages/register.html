@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입 - EquipRent</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="container" style="max-width: 600px; margin-top: 3rem; margin-bottom: 3rem;">
+        <div class="card">
+            <div class="card-header text-center">
+                <h2><a href="../index.html" class="logo">EquipRent</a></h2>
+                <p style="color: var(--text-secondary); margin-top: 0.5rem;">회원가입</p>
+            </div>
+            <div class="card-body">
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label class="form-label">이메일 *</label>
+                        <input type="email" class="form-control" id="email" required>
+                        <div class="form-help">로그인 시 사용할 이메일 주소</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">비밀번호 *</label>
+                        <input type="password" class="form-control" id="password" required>
+                        <div class="form-help">최소 8자 이상</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">비밀번호 확인 *</label>
+                        <input type="password" class="form-control" id="passwordConfirm" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">이름 *</label>
+                        <input type="text" class="form-control" id="username" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">전화번호 *</label>
+                        <input type="tel" class="form-control" id="phone" placeholder="01012345678" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">사용자 유형 *</label>
+                        <select class="form-control" id="userType" required>
+                            <option value="">선택하세요</option>
+                            <option value="renter">대여자 (장비를 빌리고 싶어요)</option>
+                            <option value="supplier">공급자 (장비를 빌려주고 싶어요)</option>
+                            <option value="both">둘 다 (빌리기도, 빌려주기도)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">주소</label>
+                        <textarea class="form-control" id="address" rows="3"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%;" id="registerBtn">
+                        회원가입
+                    </button>
+                </form>
+
+                <div style="text-align: center; margin-top: 1.5rem;">
+                    <p class="text-secondary">
+                        이미 계정이 있으신가요?
+                        <a href="login.html">로그인</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/main.js"></script>
+    <script>
+        $(document).ready(async function() {
+            // 이미 로그인된 경우 리다이렉트
+            const isAuth = await checkAuth();
+            if (isAuth) {
+                window.location.href = getDashboardUrl(currentUser.user_type);
+                return;
+            }
+
+            $('#registerForm').on('submit', async function(e) {
+                e.preventDefault();
+
+                const email = $('#email').val().trim();
+                const password = $('#password').val();
+                const passwordConfirm = $('#passwordConfirm').val();
+                const username = $('#username').val().trim();
+                const phone = $('#phone').val().trim();
+                const userType = $('#userType').val();
+                const address = $('#address').val().trim();
+
+                // 검증
+                if (!validateEmail(email)) {
+                    showAlert('올바른 이메일 형식을 입력해주세요.', 'error');
+                    return;
+                }
+
+                if (password.length < 8) {
+                    showAlert('비밀번호는 최소 8자 이상이어야 합니다.', 'error');
+                    return;
+                }
+
+                if (password !== passwordConfirm) {
+                    showAlert('비밀번호가 일치하지 않습니다.', 'error');
+                    return;
+                }
+
+                if (!userType) {
+                    showAlert('사용자 유형을 선택해주세요.', 'error');
+                    return;
+                }
+
+                showLoading('registerBtn');
+
+                try {
+                    const result = await api.post('auth.php?action=register', {
+                        email,
+                        password,
+                        username,
+                        phone,
+                        user_type: userType,
+                        address
+                    });
+
+                    if (result.success) {
+                        showAlert('회원가입이 완료되었습니다!', 'success');
+                        setTimeout(() => {
+                            window.location.href = 'login.html';
+                        }, 1500);
+                    } else {
+                        showAlert(result.error || '회원가입에 실패했습니다.', 'error');
+                        hideLoading('registerBtn');
+                    }
+                } catch (error) {
+                    console.error('Register error:', error);
+                    showAlert('회원가입 중 오류가 발생했습니다.', 'error');
+                    hideLoading('registerBtn');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
