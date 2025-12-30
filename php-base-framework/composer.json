@@ -1,0 +1,15 @@
+{
+    "name": "php-base-framework/framework",
+    "description": "A base PHP framework for all projects",
+    "type": "project",
+    "require": {
+        "php": ">=7.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Core\\": "core/",
+            "App\\": "app/"
+        }
+    },
+    "minimum-stability": "stable"
+}
