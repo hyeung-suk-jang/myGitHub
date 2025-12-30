@@ -1,0 +1,22 @@
+# Apache 설정 - 모든 요청을 index.php로 리다이렉트
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # 파일이나 디렉토리가 실제로 존재하지 않으면 index.php로
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ index.php [QSA,L]
+</IfModule>
+
+# 디렉토리 리스팅 방지
+Options -Indexes
+
+# PHP 설정
+<IfModule mod_php7.c>
+    php_value upload_max_filesize 10M
+    php_value post_max_size 10M
+    php_value max_execution_time 300
+    php_value max_input_time 300
+</IfModule>

@@ -1,0 +1,23 @@
+/* 추가 스타일이 필요한 경우 여기에 작성 */
+
+/* 커스텀 스타일 */
+.text-center {
+    text-align: center;
+}
+
+.mt-1 { margin-top: 1rem; }
+.mt-2 { margin-top: 2rem; }
+.mb-1 { margin-bottom: 1rem; }
+.mb-2 { margin-bottom: 2rem; }
+
+/* 반응형 */
+@media (max-width: 768px) {
+    nav ul {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .container {
+        padding: 0 10px;
+    }
+}
