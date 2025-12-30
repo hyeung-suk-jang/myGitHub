@@ -1,0 +1,28 @@
+# 환경 설정
+.env
+
+# 업로드 파일
+uploads/*
+!uploads/.gitkeep
+
+# OS 파일
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 로그
+*.log
+
+# 캐시
+cache/*
+!cache/.gitkeep
+
+# 세션 파일
+sessions/*
+!sessions/.gitkeep
