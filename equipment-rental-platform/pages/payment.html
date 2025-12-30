@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>결제 - EquipRent</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- 토스페이먼츠 SDK -->
+    <script src="https://js.tosspayments.com/v1/payment"></script>
+</head>
+<body>
+    <div class="container" style="max-width: 600px; margin-top: 3rem; margin-bottom: 3rem;">
+        <div class="card">
+            <div class="card-header">
+                <h2>결제</h2>
+            </div>
+            <div class="card-body">
+                <!-- 주문 정보 -->
+                <div id="orderInfo" class="mb-3">
+                    <h3 class="mb-2">주문 정보</h3>
+                    <div class="mb-2">
+                        <strong>상품명:</strong> <span id="orderName"></span>
+                    </div>
+                    <div class="mb-2">
+                        <strong>대여료:</strong> <span id="rentalFee"></span>원
+                    </div>
+                    <div class="mb-2">
+                        <strong>보증금:</strong> <span id="depositAmount"></span>원
+                    </div>
+                    <hr>
+                    <div class="mb-2" style="font-size: 1.25rem;">
+                        <strong>총 결제금액:</strong> <span id="totalAmount" style="color: var(--primary-color);"></span>원
+                    </div>
+                </div>
+
+                <!-- 결제 수단 선택 -->
+                <div class="mb-3">
+                    <h3 class="mb-2">결제 수단</h3>
+                    <div class="form-group">
+                        <select class="form-control" id="paymentMethod">
+                            <option value="카드">신용/체크카드</option>
+                            <option value="가상계좌">가상계좌</option>
+                            <option value="계좌이체">계좌이체</option>
+                            <option value="휴대폰">휴대폰</option>
+                            <option value="문화상품권">문화상품권</option>
+                            <option value="도서문화상품권">도서문화상품권</option>
+                            <option value="게임문화상품권">게임문화상품권</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="alert alert-info">
+                    <strong>안전한 결제</strong><br>
+                    에스크로 결제로 안전하게 보호됩니다. 결제 금액은 대여가 완료된 후 공급자에게 지급됩니다.
+                </div>
+
+                <button class="btn btn-primary" style="width: 100%;" id="paymentBtn" onclick="requestPayment()">
+                    결제하기
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/main.js"></script>
+    <script>
+        let rentalId = null;
+        let orderInfo = null;
+        let tossPayments = null;
+
+        $(document).ready(async function() {
+            if (!await requireAuth()) return;
+
+            // URL에서 rental_id 가져오기
+            rentalId = getUrlParam('rental_id');
+            if (!rentalId) {
+                showAlert('잘못된 접근입니다.', 'error');
+                setTimeout(() => history.back(), 1500);
+                return;
+            }
+
+            // 토스페이먼츠 초기화
+            await initTossPayments();
+
+            // 주문 정보 로드
+            await loadOrderInfo();
+        });
+
+        async function initTossPayments() {
+            try {
+                const result = await api.get('toss_payment.php?action=get-client-key');
+                if (result.success) {
+                    tossPayments = TossPayments(result.data.client_key);
+                }
+            } catch (error) {
+                console.error('Init Toss Payments error:', error);
+                showAlert('결제 시스템 초기화에 실패했습니다.', 'error');
+            }
+        }
+
+        async function loadOrderInfo() {
+            try {
+                const result = await api.post('toss_payment.php?action=prepare', {
+                    rental_id: rentalId
+                });
+
+                if (result.success) {
+                    orderInfo = result.data;
+                    displayOrderInfo();
+                } else {
+                    showAlert(result.error || '주문 정보를 불러올 수 없습니다.', 'error');
+                    setTimeout(() => history.back(), 1500);
+                }
+            } catch (error) {
+                console.error('Load order info error:', error);
+                showAlert('주문 정보를 불러오는 중 오류가 발생했습니다.', 'error');
+            }
+        }
+
+        function displayOrderInfo() {
+            $('#orderName').text(orderInfo.order_name);
+
+            // 대여료와 보증금 계산 (간단히 절반으로 나눔, 실제로는 API에서 제공해야 함)
+            const rentalFee = Math.floor(orderInfo.amount * 0.7);
+            const deposit = orderInfo.amount - rentalFee;
+
+            $('#rentalFee').text(formatNumber(rentalFee));
+            $('#depositAmount').text(formatNumber(deposit));
+            $('#totalAmount').text(formatNumber(orderInfo.amount));
+        }
+
+        async function requestPayment() {
+            if (!tossPayments || !orderInfo) {
+                showAlert('결제 준비가 완료되지 않았습니다.', 'error');
+                return;
+            }
+
+            const paymentMethod = $('#paymentMethod').val();
+
+            try {
+                await tossPayments.requestPayment(paymentMethod, {
+                    amount: orderInfo.amount,
+                    orderId: orderInfo.order_id,
+                    orderName: orderInfo.order_name,
+                    customerName: orderInfo.customer_name,
+                    customerEmail: orderInfo.customer_email,
+                    successUrl: window.location.origin + window.location.pathname.replace('payment.html', 'payment-success.html'),
+                    failUrl: window.location.origin + window.location.pathname.replace('payment.html', 'payment-fail.html'),
+                });
+            } catch (error) {
+                console.error('Payment request error:', error);
+                if (error.code === 'USER_CANCEL') {
+                    showAlert('결제가 취소되었습니다.', 'info');
+                } else {
+                    showAlert(error.message || '결제 요청에 실패했습니다.', 'error');
+                }
+            }
+        }
+    </script>
+</body>
+</html>

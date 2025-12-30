@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>결제 완료 - EquipRent</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="container" style="max-width: 600px; margin-top: 5rem;">
+        <div class="card text-center">
+            <div class="card-body" style="padding: 3rem;">
+                <div style="font-size: 4rem; margin-bottom: 1rem;">✅</div>
+                <h2 class="mb-3">결제가 완료되었습니다!</h2>
+                <p class="text-secondary mb-3">결제가 성공적으로 처리되었습니다.</p>
+                <div id="loadingMessage">결제 정보를 확인하는 중...</div>
+                <div id="successMessage" style="display: none;">
+                    <div class="mb-3">
+                        <strong>주문번호:</strong> <span id="orderId"></span>
+                    </div>
+                    <div class="mb-3">
+                        <strong>결제금액:</strong> <span id="amount"></span>원
+                    </div>
+                    <a href="renter-dashboard.html" class="btn btn-primary mt-3">대여 내역 보기</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/main.js"></script>
+    <script>
+        $(document).ready(async function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const paymentKey = urlParams.get('paymentKey');
+            const orderId = urlParams.get('orderId');
+            const amount = urlParams.get('amount');
+
+            if (!paymentKey || !orderId || !amount) {
+                showAlert('잘못된 접근입니다.', 'error');
+                setTimeout(() => window.location.href = '../index.html', 1500);
+                return;
+            }
+
+            try {
+                const result = await api.post('toss_payment.php?action=confirm', {
+                    paymentKey,
+                    orderId,
+                    amount
+                });
+
+                if (result.success) {
+                    $('#loadingMessage').hide();
+                    $('#successMessage').show();
+                    $('#orderId').text(orderId);
+                    $('#amount').text(formatNumber(amount));
+                } else {
+                    throw new Error(result.error || '결제 승인에 실패했습니다.');
+                }
+            } catch (error) {
+                console.error('Payment confirmation error:', error);
+                showAlert(error.message || '결제 확인 중 오류가 발생했습니다.', 'error');
+                setTimeout(() => window.location.href = 'renter-dashboard.html', 2000);
+            }
+        });
+    </script>
+</body>
+</html>
