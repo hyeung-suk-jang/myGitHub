@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입 - 동화책 열람 플랫폼</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1><a href="/">동화책 열람 플랫폼</a></h1>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="auth-form">
+            <h2>회원가입</h2>
+            <form id="register-form">
+                <div class="form-group">
+                    <label for="email">이메일</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="username">사용자명</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">비밀번호</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="user_type">회원 유형</label>
+                    <select id="user_type" name="user_type" required>
+                        <option value="">선택하세요</option>
+                        <option value="reader">독자</option>
+                        <option value="author">작가</option>
+                    </select>
+                </div>
+                <div class="error-message" id="error-message" style="display: none;"></div>
+                <button type="submit" class="btn btn-primary">회원가입</button>
+            </form>
+            <p class="auth-link">이미 계정이 있으신가요? <a href="/login">로그인</a></p>
+        </div>
+    </main>
+
+    <script src="/static/js/app.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#register-form').on('submit', function(e) {
+                e.preventDefault();
+
+                const email = $('#email').val();
+                const username = $('#username').val();
+                const password = $('#password').val();
+                const user_type = $('#user_type').val();
+
+                if (!user_type) {
+                    $('#error-message').text('회원 유형을 선택해주세요.').show();
+                    return;
+                }
+
+                $.ajax({
+                    url: '/api/users/register',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        email: email,
+                        username: username,
+                        password: password,
+                        user_type: user_type
+                    }),
+                    success: function(response) {
+                        localStorage.setItem('token', response.access_token);
+                        localStorage.setItem('user', JSON.stringify(response.user));
+
+                        if (response.user.user_type === 'author') {
+                            window.location.href = '/author/dashboard';
+                        } else {
+                            window.location.href = '/reader/dashboard';
+                        }
+                    },
+                    error: function(error) {
+                        let errorMsg = '회원가입에 실패했습니다.';
+                        if (error.responseJSON && error.responseJSON.detail) {
+                            errorMsg = error.responseJSON.detail;
+                        }
+                        $('#error-message').text(errorMsg).show();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

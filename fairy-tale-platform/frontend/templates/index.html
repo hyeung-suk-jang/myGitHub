@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>동화책 열람 플랫폼</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>동화책 열람 플랫폼</h1>
+            <nav>
+                <div id="auth-buttons">
+                    <a href="/login" class="btn">로그인</a>
+                    <a href="/register" class="btn btn-primary">회원가입</a>
+                </div>
+                <div id="user-menu" style="display: none;">
+                    <span id="username"></span>
+                    <a href="#" id="dashboard-link" class="btn">대시보드</a>
+                    <a href="#" id="logout-btn" class="btn">로그아웃</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="hero">
+            <h2>작가와 독자를 연결하는 동화책 플랫폼</h2>
+            <p>당신의 동화를 세상과 공유하고, 멋진 이야기를 발견하세요</p>
+        </section>
+
+        <section class="books-section">
+            <h3>최신 동화책</h3>
+            <div id="books-grid" class="books-grid">
+                <div class="loading">로딩 중...</div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 동화책 열람 플랫폼. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="/static/js/app.js"></script>
+    <script>
+        $(document).ready(function() {
+            checkAuth();
+            loadBooks();
+        });
+
+        function loadBooks() {
+            $.ajax({
+                url: '/api/books/',
+                method: 'GET',
+                success: function(books) {
+                    displayBooks(books);
+                },
+                error: function(error) {
+                    $('#books-grid').html('<p>동화책을 불러오는데 실패했습니다.</p>');
+                }
+            });
+        }
+
+        function displayBooks(books) {
+            if (books.length === 0) {
+                $('#books-grid').html('<p>아직 등록된 동화책이 없습니다.</p>');
+                return;
+            }
+
+            let html = '';
+            books.forEach(function(book) {
+                html += `
+                    <div class="book-card">
+                        <img src="${book.cover_image || '/static/images/default-book.png'}" alt="${book.title}">
+                        <h4>${book.title}</h4>
+                        <p class="description">${book.description || '설명 없음'}</p>
+                        <p class="price">${book.price.toLocaleString()}원</p>
+                        <p class="views">조회수: ${book.views}</p>
+                        <a href="/book/${book.id}" class="btn btn-primary">자세히 보기</a>
+                    </div>
+                `;
+            });
+            $('#books-grid').html(html);
+        }
+    </script>
+</body>
+</html>

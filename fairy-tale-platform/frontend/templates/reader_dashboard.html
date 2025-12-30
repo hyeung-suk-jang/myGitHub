@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>독자 대시보드 - 동화책 열람 플랫폼</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1><a href="/">동화책 열람 플랫폼</a></h1>
+            <nav>
+                <span id="username"></span>
+                <a href="/" class="btn">홈</a>
+                <a href="#" id="logout-btn" class="btn">로그아웃</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <h2>독자 대시보드</h2>
+
+        <section class="books-section">
+            <h3>구매한 동화책</h3>
+            <div id="purchased-books" class="books-grid">
+                <div class="loading">로딩 중...</div>
+            </div>
+        </section>
+
+        <section class="payments-section">
+            <h3>결제 내역</h3>
+            <div id="payments-list">
+                <div class="loading">로딩 중...</div>
+            </div>
+        </section>
+    </main>
+
+    <script src="/static/js/app.js"></script>
+    <script>
+        $(document).ready(function() {
+            requireAuth('reader');
+            loadPurchasedBooks();
+            loadPayments();
+        });
+
+        function loadPurchasedBooks() {
+            $.ajax({
+                url: '/api/payments/purchased-books',
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                },
+                success: function(books) {
+                    displayPurchasedBooks(books);
+                }
+            });
+        }
+
+        function displayPurchasedBooks(books) {
+            if (books.length === 0) {
+                $('#purchased-books').html('<p>아직 구매한 동화책이 없습니다.</p>');
+                return;
+            }
+
+            let html = '';
+            books.forEach(function(book) {
+                html += `
+                    <div class="book-card">
+                        <img src="${book.cover_image || '/static/images/default-book.png'}" alt="${book.title}">
+                        <h4>${book.title}</h4>
+                        <p class="description">${book.description || '설명 없음'}</p>
+                        <a href="/book/${book.id}" class="btn btn-primary">읽기</a>
+                    </div>
+                `;
+            });
+            $('#purchased-books').html(html);
+        }
+
+        function loadPayments() {
+            $.ajax({
+                url: '/api/payments/my-payments',
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                },
+                success: function(payments) {
+                    displayPayments(payments);
+                }
+            });
+        }
+
+        function displayPayments(payments) {
+            if (payments.length === 0) {
+                $('#payments-list').html('<p>결제 내역이 없습니다.</p>');
+                return;
+            }
+
+            let html = '<table><tr><th>날짜</th><th>금액</th><th>상태</th></tr>';
+            payments.forEach(function(payment) {
+                const date = new Date(payment.created_at).toLocaleDateString('ko-KR');
+                const statusText = {
+                    'completed': '완료',
+                    'failed': '실패',
+                    'refunded': '환불'
+                };
+                html += `
+                    <tr>
+                        <td>${date}</td>
+                        <td>${payment.amount.toLocaleString()}원</td>
+                        <td>${statusText[payment.payment_status] || payment.payment_status}</td>
+                    </tr>
+                `;
+            });
+            html += '</table>';
+            $('#payments-list').html(html);
+        }
+    </script>
+</body>
+</html>

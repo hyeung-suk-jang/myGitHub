@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>작품 등록 - 동화책 열람 플랫폼</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1><a href="/">동화책 열람 플랫폼</a></h1>
+            <nav>
+                <a href="/author/dashboard" class="btn">대시보드</a>
+                <a href="#" id="logout-btn" class="btn">로그아웃</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="upload-form">
+            <h2>작품 등록</h2>
+            <form id="upload-form">
+                <div class="form-group">
+                    <label for="title">제목</label>
+                    <input type="text" id="title" name="title" required>
+                </div>
+                <div class="form-group">
+                    <label for="description">설명</label>
+                    <textarea id="description" name="description" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="price">가격 (원)</label>
+                    <input type="number" id="price" name="price" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="cover_image">표지 이미지 URL (선택)</label>
+                    <input type="text" id="cover_image" name="cover_image">
+                </div>
+                <div class="form-group">
+                    <label for="content">동화 내용</label>
+                    <textarea id="content" name="content" rows="15" required></textarea>
+                </div>
+                <div class="error-message" id="error-message" style="display: none;"></div>
+                <button type="submit" class="btn btn-primary">등록하기</button>
+            </form>
+        </div>
+    </main>
+
+    <script src="/static/js/app.js"></script>
+    <script>
+        $(document).ready(function() {
+            requireAuth('author');
+
+            $('#upload-form').on('submit', function(e) {
+                e.preventDefault();
+
+                const formData = {
+                    title: $('#title').val(),
+                    description: $('#description').val(),
+                    price: parseFloat($('#price').val()),
+                    cover_image: $('#cover_image').val() || null,
+                    content: $('#content').val()
+                };
+
+                $.ajax({
+                    url: '/api/books/',
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem('token'),
+                        'Content-Type': 'application/json'
+                    },
+                    data: JSON.stringify(formData),
+                    success: function(response) {
+                        alert('작품이 성공적으로 등록되었습니다!');
+                        window.location.href = '/author/dashboard';
+                    },
+                    error: function(error) {
+                        let errorMsg = '작품 등록에 실패했습니다.';
+                        if (error.responseJSON && error.responseJSON.detail) {
+                            errorMsg = error.responseJSON.detail;
+                        }
+                        $('#error-message').text(errorMsg).show();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

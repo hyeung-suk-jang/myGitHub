@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>동화책 보기 - 동화책 열람 플랫폼</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1><a href="/">동화책 열람 플랫폼</a></h1>
+            <nav>
+                <a href="/" class="btn">홈</a>
+                <span id="username"></span>
+                <a href="#" id="logout-btn" class="btn">로그아웃</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div id="book-detail">
+            <div class="loading">로딩 중...</div>
+        </div>
+    </main>
+
+    <script src="/static/js/app.js"></script>
+    <script>
+        const bookId = {{ book_id }};
+
+        $(document).ready(function() {
+            checkAuth();
+            loadBook();
+        });
+
+        function loadBook() {
+            $.ajax({
+                url: '/api/books/' + bookId,
+                method: 'GET',
+                success: function(book) {
+                    displayBookInfo(book);
+                    checkPurchaseStatus();
+                },
+                error: function(error) {
+                    $('#book-detail').html('<p>동화책을 불러오는데 실패했습니다.</p>');
+                }
+            });
+        }
+
+        function displayBookInfo(book) {
+            const html = `
+                <div class="book-detail-header">
+                    <img src="${book.cover_image || '/static/images/default-book.png'}" alt="${book.title}" class="book-cover-large">
+                    <div class="book-info">
+                        <h2>${book.title}</h2>
+                        <p class="description">${book.description || '설명 없음'}</p>
+                        <p class="price">${book.price.toLocaleString()}원</p>
+                        <p class="views">조회수: ${book.views}</p>
+                        <div id="purchase-section"></div>
+                    </div>
+                </div>
+                <div id="book-content-section" style="display: none;">
+                    <h3>동화 내용</h3>
+                    <div id="book-content" class="book-content"></div>
+                </div>
+            `;
+            $('#book-detail').html(html);
+        }
+
+        function checkPurchaseStatus() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                $('#purchase-section').html('<a href="/login" class="btn btn-primary">로그인하여 구매하기</a>');
+                return;
+            }
+
+            $.ajax({
+                url: '/api/books/' + bookId + '/purchased',
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                },
+                success: function(response) {
+                    if (response.purchased) {
+                        $('#purchase-section').html('<button class="btn btn-primary" onclick="loadContent()">읽기</button>');
+                        if (response.is_author) {
+                            $('#purchase-section').append('<p class="info-text">내가 작성한 작품입니다.</p>');
+                        }
+                    } else {
+                        $('#purchase-section').html('<button class="btn btn-primary" onclick="purchaseBook()">구매하기</button>');
+                    }
+                }
+            });
+        }
+
+        function purchaseBook() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('로그인이 필요합니다.');
+                window.location.href = '/login';
+                return;
+            }
+
+            if (confirm('이 동화책을 구매하시겠습니까?')) {
+                $.ajax({
+                    url: '/api/payments/',
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                        'Content-Type': 'application/json'
+                    },
+                    data: JSON.stringify({
+                        book_id: bookId,
+                        payment_method: 'card'
+                    }),
+                    success: function(response) {
+                        alert('구매가 완료되었습니다!');
+                        checkPurchaseStatus();
+                        loadContent();
+                    },
+                    error: function(error) {
+                        let errorMsg = '구매에 실패했습니다.';
+                        if (error.responseJSON && error.responseJSON.detail) {
+                            errorMsg = error.responseJSON.detail;
+                        }
+                        alert(errorMsg);
+                    }
+                });
+            }
+        }
+
+        function loadContent() {
+            const token = localStorage.getItem('token');
+
+            $.ajax({
+                url: '/api/books/' + bookId + '/content',
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                },
+                success: function(response) {
+                    $('#book-content').html('<p>' + response.content.replace(/\n/g, '</p><p>') + '</p>');
+                    $('#book-content-section').show();
+                    $('html, body').animate({
+                        scrollTop: $('#book-content-section').offset().top
+                    }, 500);
+                },
+                error: function(error) {
+                    let errorMsg = '내용을 불러오는데 실패했습니다.';
+                    if (error.responseJSON && error.responseJSON.detail) {
+                        errorMsg = error.responseJSON.detail;
+                    }
+                    alert(errorMsg);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
