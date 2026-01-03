@@ -1,9 +1,9 @@
 """
 User Model
-사용자 모델
+사용자 모델 - 스터디 카페 키오스크용
 """
 
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from core.database import Base
@@ -11,29 +11,32 @@ from datetime import datetime
 
 
 class User(Base):
-    """사용자 모델 - PHP의 User 모델과 유사"""
+    """사용자 모델 - 스터디 카페 사용자"""
 
     __tablename__ = "users"
 
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    name = Column(String(100), nullable=False)
-    email = Column(String(100), unique=True, index=True, nullable=False)
+    id = Column(String(36), primary_key=True, index=True)
+    username = Column(String(100), nullable=False)
+    email = Column(String(255), unique=True, index=True, nullable=False)
+    phone = Column(String(20), nullable=False)
     password = Column(String(255), nullable=False)
+    is_admin = Column(Boolean, default=False, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
     # 관계 설정
-    posts = relationship("Post", back_populates="user", cascade="all, delete-orphan")
+    sessions = relationship("Session", back_populates="user", cascade="all, delete-orphan")
+    usage_history = relationship("UsageHistory", back_populates="user", cascade="all, delete-orphan")
 
     def __repr__(self):
-        return f"<User(id={self.id}, name='{self.name}', email='{self.email}')>"
+        return f"<User(id={self.id}, username='{self.username}', email='{self.email}')>"
 
     def to_dict(self):
         """모델을 딕셔너리로 변환"""
         return {
             "id": self.id,
-            "name": self.name,
+            "username": self.username,
             "email": self.email,
+            "phone": self.phone,
+            "is_admin": self.is_admin,
             "created_at": self.created_at.isoformat() if self.created_at else None,
-            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
         }
