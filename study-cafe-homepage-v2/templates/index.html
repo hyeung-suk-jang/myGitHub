@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="프리미엄 스터디 카페 - 실시간 좌석 현황 및 온라인 예약 시스템">
+    <title>Study Cafe V2 - 프리미엄 스터디 카페</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <i class="fas fa-book-reader"></i>
+                <span>STUDY CAFE</span>
+                <span class="version-badge">V2</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#home">홈</a></li>
+                <li><a href="#concept">컨셉</a></li>
+                <li><a href="#seats">좌석현황</a></li>
+                <li><a href="#facilities">시설안내</a></li>
+                <li><a href="#gallery">갤러리</a></li>
+                <li><a href="#pricing">이용요금</a></li>
+                <li><a href="#location">오시는길</a></li>
+                <li><a href="#contact" class="btn-contact">문의하기</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-background"></div>
+        <div class="container">
+            <div class="hero-content">
+                <span class="hero-badge">Premium Study Space</span>
+                <h1 class="hero-title">
+                    당신의 성공을 위한
+                    <span class="gradient-text">최고의 학습 공간</span>
+                </h1>
+                <p class="hero-subtitle">
+                    실시간 좌석 현황 확인부터 온라인 예약까지<br>
+                    스마트한 스터디 카페 경험을 제공합니다
+                </p>
+                <div class="hero-buttons">
+                    <a href="#seats" class="btn btn-primary">
+                        <i class="fas fa-chair"></i>
+                        실시간 좌석 보기
+                    </a>
+                    <a href="#pricing" class="btn btn-secondary">
+                        <i class="fas fa-ticket-alt"></i>
+                        이용권 구매
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">120+</span>
+                        <span class="stat-label">좌석수</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">24/7</span>
+                        <span class="stat-label">운영시간</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">5000+</span>
+                        <span class="stat-label">누적 이용자</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="availableSeats">--</span>
+                        <span class="stat-label">이용가능 좌석</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <div class="mouse"></div>
+        </div>
+    </section>
+
+    <!-- Concept Section -->
+    <section id="concept" class="concept">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">CONCEPT</span>
+                <h2>우리의 컨셉</h2>
+                <p>편안함과 집중, 두 가지를 모두 담은 프리미엄 학습 공간</p>
+            </div>
+            <div class="concept-grid">
+                <div class="concept-card">
+                    <div class="concept-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3>최적의 조명</h3>
+                    <p>눈의 피로를 최소화하는 LED 조명 시스템으로 장시간 학습에도 편안함을 제공합니다</p>
+                </div>
+                <div class="concept-card">
+                    <div class="concept-icon">
+                        <i class="fas fa-volume-mute"></i>
+                    </div>
+                    <h3>완벽한 방음</h3>
+                    <p>최고급 방음 시설로 외부 소음을 차단하여 극도의 집중력을 유지할 수 있습니다</p>
+                </div>
+                <div class="concept-card">
+                    <div class="concept-icon">
+                        <i class="fas fa-couch"></i>
+                    </div>
+                    <h3>프리미엄 인테리어</h3>
+                    <p>모던하고 세련된 인테리어로 편안하면서도 고급스러운 분위기를 연출합니다</p>
+                </div>
+                <div class="concept-card">
+                    <div class="concept-icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <h3>친환경 공간</h3>
+                    <p>공기청정기와 식물을 배치하여 쾌적하고 건강한 학습 환경을 조성합니다</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Real-time Seats Section -->
+    <section id="seats" class="seats-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">REAL-TIME</span>
+                <h2>실시간 좌석 현황</h2>
+                <p>현재 이용 가능한 좌석을 실시간으로 확인하세요</p>
+            </div>
+
+            <!-- Seat Statistics -->
+            <div class="seat-statistics">
+                <div class="stat-card">
+                    <div class="stat-icon available">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="availableCount">--</span>
+                        <span class="stat-name">이용가능</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon occupied">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="occupiedCount">--</span>
+                        <span class="stat-name">사용중</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon reserved">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="reservedCount">--</span>
+                        <span class="stat-name">예약됨</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon total">
+                        <i class="fas fa-chair"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="totalCount">--</span>
+                        <span class="stat-name">전체 좌석</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seat Filters -->
+            <div class="seat-filters">
+                <button class="filter-btn active" data-filter="all">전체</button>
+                <button class="filter-btn" data-filter="fixed">고정석</button>
+                <button class="filter-btn" data-filter="free">자유석</button>
+                <button class="filter-btn" data-filter="study_room">스터디룸</button>
+            </div>
+
+            <!-- Seats Grid -->
+            <div class="seats-container">
+                <div id="seatsGrid" class="seats-grid">
+                    <!-- JavaScript로 동적 생성 -->
+                    <div class="loading-spinner">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>좌석 정보를 불러오는 중...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">WHY CHOOSE US</span>
+                <h2>스터디 카페를 선택해야 하는 이유</h2>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-wifi"></i>
+                    </div>
+                    <h3>초고속 인터넷</h3>
+                    <p>기가 인터넷으로 끊김 없는 학습 환경을 제공합니다</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-coffee"></i>
+                    </div>
+                    <h3>무료 음료</h3>
+                    <p>커피, 차, 생수 등 다양한 음료를 무제한 제공합니다</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>24시간 보안</h3>
+                    <p>CCTV와 출입통제 시스템으로 안전을 보장합니다</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-print"></i>
+                    </div>
+                    <h3>프린터/복사기</h3>
+                    <p>무료 프린터와 복사기를 제공합니다</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-snowflake"></i>
+                    </div>
+                    <h3>쾌적한 환경</h3>
+                    <p>최적의 온습도를 유지합니다</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <h3>스터디룸</h3>
+                    <p>그룹 스터디를 위한 전용 공간을 제공합니다</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Facilities Section -->
+    <section id="facilities" class="facilities">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">FACILITIES</span>
+                <h2>프리미엄 시설 안내</h2>
+            </div>
+            <div class="facilities-grid">
+                <div class="facility-card">
+                    <div class="facility-image">
+                        <div class="placeholder-image gradient-purple">
+                            <i class="fas fa-chair"></i>
+                            <span>고정석</span>
+                        </div>
+                        <div class="facility-badge">인기</div>
+                    </div>
+                    <div class="facility-content">
+                        <h3>고정석</h3>
+                        <p>개인 전용 좌석으로 책상과 수납공간이 제공됩니다</p>
+                        <ul class="facility-features">
+                            <li><i class="fas fa-check"></i> 개인 전용 좌석</li>
+                            <li><i class="fas fa-check"></i> 수납함 제공</li>
+                            <li><i class="fas fa-check"></i> 조명 개별 조절</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="facility-card">
+                    <div class="facility-image">
+                        <div class="placeholder-image gradient-green">
+                            <i class="fas fa-couch"></i>
+                            <span>자유석</span>
+                        </div>
+                        <div class="facility-badge success">저렴</div>
+                    </div>
+                    <div class="facility-content">
+                        <h3>자유석</h3>
+                        <p>합리적인 가격으로 편안하게 이용 가능한 좌석입니다</p>
+                        <ul class="facility-features">
+                            <li><i class="fas fa-check"></i> 자유로운 좌석 선택</li>
+                            <li><i class="fas fa-check"></i> 시간제 이용 가능</li>
+                            <li><i class="fas fa-check"></i> 넓은 책상 공간</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="facility-card">
+                    <div class="facility-image">
+                        <div class="placeholder-image gradient-orange">
+                            <i class="fas fa-users"></i>
+                            <span>스터디룸</span>
+                        </div>
+                        <div class="facility-badge warning">프리미엄</div>
+                    </div>
+                    <div class="facility-content">
+                        <h3>스터디룸</h3>
+                        <p>팀 프로젝트와 그룹 스터디를 위한 전용 공간입니다</p>
+                        <ul class="facility-features">
+                            <li><i class="fas fa-check"></i> 4~8인 수용 가능</li>
+                            <li><i class="fas fa-check"></i> 화이트보드 제공</li>
+                            <li><i class="fas fa-check"></i> 완벽한 방음</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="gallery">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">GALLERY</span>
+                <h2>갤러리</h2>
+                <p>스터디 카페의 쾌적한 공간을 미리 확인해보세요</p>
+            </div>
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <div class="placeholder-image gradient-blue">
+                        <i class="fas fa-image"></i>
+                        <span>메인 홀</span>
+                    </div>
+                    <div class="gallery-overlay">
+                        <h4>메인 홀</h4>
+                        <p>넓고 쾌적한 메인 학습 공간</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <div class="placeholder-image gradient-purple">
+                        <i class="fas fa-image"></i>
+                        <span>고정석</span>
+                    </div>
+                    <div class="gallery-overlay">
+                        <h4>고정석</h4>
+                        <p>개인 맞춤형 고정석 공간</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <div class="placeholder-image gradient-green">
+                        <i class="fas fa-image"></i>
+                        <span>스터디룸</span>
+                    </div>
+                    <div class="gallery-overlay">
+                        <h4>스터디룸</h4>
+                        <p>그룹 스터디를 위한 전용 룸</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <div class="placeholder-image gradient-orange">
+                        <i class="fas fa-image"></i>
+                        <span>휴게실</span>
+                    </div>
+                    <div class="gallery-overlay">
+                        <h4>휴게실</h4>
+                        <p>편안한 휴식을 위한 공간</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <div class="placeholder-image gradient-pink">
+                        <i class="fas fa-image"></i>
+                        <span>카페테리아</span>
+                    </div>
+                    <div class="gallery-overlay">
+                        <h4>카페테리아</h4>
+                        <p>무료 음료를 즐기는 공간</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <div class="placeholder-image gradient-cyan">
+                        <i class="fas fa-image"></i>
+                        <span>복도</span>
+                    </div>
+                    <div class="gallery-overlay">
+                        <h4>복도</h4>
+                        <p>깔끔하고 모던한 통로</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="pricing">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">PRICING</span>
+                <h2>합리적인 이용 요금</h2>
+            </div>
+            <div class="pricing-toggle">
+                <button class="toggle-btn active" data-type="time">시간권</button>
+                <button class="toggle-btn" data-type="fixed">정기권</button>
+            </div>
+            <div class="pricing-grid" id="time-pricing">
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3>2시간권</h3>
+                        <div class="price">
+                            <span class="currency">₩</span>
+                            <span class="amount">3,000</span>
+                        </div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> 자유석 2시간 이용</li>
+                        <li><i class="fas fa-check"></i> 무료 음료</li>
+                        <li><i class="fas fa-check"></i> 무료 Wi-Fi</li>
+                        <li><i class="fas fa-check"></i> 프린터 이용</li>
+                    </ul>
+                    <button class="btn btn-outline">선택하기</button>
+                </div>
+                <div class="pricing-card popular">
+                    <div class="popular-badge">BEST</div>
+                    <div class="pricing-header">
+                        <h3>하루권</h3>
+                        <div class="price">
+                            <span class="currency">₩</span>
+                            <span class="amount">8,000</span>
+                        </div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> 자유석 하루 이용</li>
+                        <li><i class="fas fa-check"></i> 무료 음료</li>
+                        <li><i class="fas fa-check"></i> 무료 Wi-Fi</li>
+                        <li><i class="fas fa-check"></i> 프린터 이용</li>
+                        <li><i class="fas fa-check"></i> 사물함 제공</li>
+                    </ul>
+                    <button class="btn btn-primary">선택하기</button>
+                </div>
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3>야간권</h3>
+                        <div class="price">
+                            <span class="currency">₩</span>
+                            <span class="amount">6,000</span>
+                        </div>
+                        <small>18:00 ~ 08:00</small>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> 야간 자유석 이용</li>
+                        <li><i class="fas fa-check"></i> 무료 음료</li>
+                        <li><i class="fas fa-check"></i> 무료 Wi-Fi</li>
+                        <li><i class="fas fa-check"></i> 프린터 이용</li>
+                    </ul>
+                    <button class="btn btn-outline">선택하기</button>
+                </div>
+            </div>
+            <div class="pricing-grid" id="fixed-pricing" style="display: none;">
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3>1개월</h3>
+                        <div class="price">
+                            <span class="currency">₩</span>
+                            <span class="amount">120,000</span>
+                        </div>
+                        <small>하루 4,000원</small>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> 고정석 1개월 이용</li>
+                        <li><i class="fas fa-check"></i> 개인 수납함</li>
+                        <li><i class="fas fa-check"></i> 무료 음료</li>
+                        <li><i class="fas fa-check"></i> 무료 Wi-Fi</li>
+                        <li><i class="fas fa-check"></i> 프린터 무제한</li>
+                    </ul>
+                    <button class="btn btn-outline">선택하기</button>
+                </div>
+                <div class="pricing-card popular">
+                    <div class="popular-badge">BEST</div>
+                    <div class="pricing-header">
+                        <h3>3개월</h3>
+                        <div class="price">
+                            <span class="currency">₩</span>
+                            <span class="amount">300,000</span>
+                        </div>
+                        <small>하루 3,333원 (17% 할인)</small>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> 고정석 3개월 이용</li>
+                        <li><i class="fas fa-check"></i> 개인 수납함</li>
+                        <li><i class="fas fa-check"></i> 무료 음료</li>
+                        <li><i class="fas fa-check"></i> 무료 Wi-Fi</li>
+                        <li><i class="fas fa-check"></i> 프린터 무제한</li>
+                        <li><i class="fas fa-check"></i> 스터디룸 할인</li>
+                    </ul>
+                    <button class="btn btn-primary">선택하기</button>
+                </div>
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3>6개월</h3>
+                        <div class="price">
+                            <span class="currency">₩</span>
+                            <span class="amount">540,000</span>
+                        </div>
+                        <small>하루 3,000원 (25% 할인)</small>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> 고정석 6개월 이용</li>
+                        <li><i class="fas fa-check"></i> 개인 수납함</li>
+                        <li><i class="fas fa-check"></i> 무료 음료</li>
+                        <li><i class="fas fa-check"></i> 무료 Wi-Fi</li>
+                        <li><i class="fas fa-check"></i> 프린터 무제한</li>
+                        <li><i class="fas fa-check"></i> 스터디룸 무료 (월 5시간)</li>
+                    </ul>
+                    <button class="btn btn-outline">선택하기</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Location Section -->
+    <section id="location" class="location">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">LOCATION</span>
+                <h2>오시는 길</h2>
+            </div>
+            <div class="location-content">
+                <div class="location-map">
+                    <div class="map-placeholder">
+                        <i class="fas fa-map-marked-alt"></i>
+                        <p>지도가 여기에 표시됩니다</p>
+                    </div>
+                </div>
+                <div class="location-info">
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="info-content">
+                            <h4>주소</h4>
+                            <p>서울특별시 강남구 테헤란로 123<br>스터디빌딩 3층</p>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="fas fa-subway"></i>
+                        </div>
+                        <div class="info-content">
+                            <h4>대중교통</h4>
+                            <p>지하철 2호선 강남역 3번 출구<br>도보 5분 거리</p>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="info-content">
+                            <h4>운영시간</h4>
+                            <p>24시간 연중무휴<br>(명절 당일 휴무)</p>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="info-content">
+                            <h4>연락처</h4>
+                            <p>전화: 02-1234-5678<br>이메일: info@studycafe.com</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">CONTACT</span>
+                <h2>문의하기</h2>
+            </div>
+            <div class="contact-content">
+                <form class="contact-form" id="contactForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="name">이름</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">연락처</label>
+                            <input type="tel" id="phone" name="phone" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">이메일</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="subject">제목</label>
+                        <input type="text" id="subject" name="subject" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">문의내용</label>
+                        <textarea id="message" name="message" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fas fa-paper-plane"></i>
+                        문의하기
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><i class="fas fa-book-reader"></i> STUDY CAFE</h3>
+                    <p>프리미엄 학습 공간의 새로운 기준</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>바로가기</h4>
+                    <ul>
+                        <li><a href="#home">홈</a></li>
+                        <li><a href="#concept">컨셉</a></li>
+                        <li><a href="#seats">좌석현황</a></li>
+                        <li><a href="#facilities">시설안내</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>고객지원</h4>
+                    <ul>
+                        <li><a href="#">이용안내</a></li>
+                        <li><a href="#">자주묻는질문</a></li>
+                        <li><a href="#">공지사항</a></li>
+                        <li><a href="#">개인정보처리방침</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>문의</h4>
+                    <ul>
+                        <li><i class="fas fa-phone"></i> 02-1234-5678</li>
+                        <li><i class="fas fa-envelope"></i> info@studycafe.com</li>
+                        <li><i class="fas fa-map-marker-alt"></i> 서울 강남구 테헤란로 123</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Study Cafe V2. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button id="backToTop" class="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Reservation Modal -->
+    <div id="reservationModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <h2>좌석 예약하기</h2>
+            <form id="reservationForm">
+                <input type="hidden" id="reservationSeatId" name="seat_id">
+                <div class="form-group">
+                    <label>좌석 번호</label>
+                    <input type="text" id="reservationSeatNumber" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="reservationName">이름</label>
+                    <input type="text" id="reservationName" name="user_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="reservationPhone">연락처 (예: 010-1234-5678)</label>
+                    <input type="tel" id="reservationPhone" name="user_phone" pattern="\d{3}-\d{4}-\d{4}" placeholder="010-1234-5678" required>
+                </div>
+                <div class="form-group">
+                    <label for="reservationEmail">이메일</label>
+                    <input type="email" id="reservationEmail" name="user_email" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="reservationStartTime">시작 시간</label>
+                        <input type="datetime-local" id="reservationStartTime" name="start_time" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reservationEndTime">종료 시간</label>
+                        <input type="datetime-local" id="reservationEndTime" name="end_time" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">
+                    <i class="fas fa-check"></i>
+                    예약 완료
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/js/main.js"></script>
+</body>
+</html>
