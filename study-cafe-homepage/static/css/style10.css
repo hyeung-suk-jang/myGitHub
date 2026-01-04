@@ -1,0 +1,418 @@
+/* Typography Focused Theme - V10 */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;600;800&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #fafafa;
+    color: #1a1a1a;
+    line-height: 1.8;
+}
+
+.container { max-width: 1000px; margin: 0 auto; padding: 0 40px; }
+
+/* Navigation */
+.navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: #fff;
+    border-bottom: 1px solid #e0e0e0;
+    z-index: 1000;
+    padding: 2rem 0;
+}
+
+.navbar .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 900;
+    color: #1a1a1a;
+    font-style: italic;
+}
+
+.nav-menu {
+    display: flex;
+    list-style: none;
+    gap: 3rem;
+}
+
+.nav-menu a {
+    text-decoration: none;
+    color: #666;
+    font-weight: 400;
+    font-size: 0.95rem;
+    letter-spacing: 0.5px;
+    transition: all 0.3s;
+}
+
+.nav-menu a:hover { color: #1a1a1a; }
+
+.btn-contact {
+    padding: 0.8rem 2rem;
+    background: #1a1a1a;
+    color: #fff;
+    border-radius: 3px;
+    font-weight: 600;
+}
+
+/* Hero - Typography First */
+.hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding-top: 120px;
+    background: #fff;
+}
+
+.hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 8rem;
+    font-weight: 900;
+    line-height: 0.95;
+    margin-bottom: 2rem;
+    color: #1a1a1a;
+    letter-spacing: -4px;
+}
+
+.gradient-text {
+    font-style: italic;
+    color: #666;
+}
+
+.hero-subtitle {
+    font-size: 1.6rem;
+    color: #666;
+    margin-bottom: 4rem;
+    font-weight: 300;
+    max-width: 600px;
+    line-height: 1.7;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 6rem;
+}
+
+.btn {
+    padding: 1.5rem 4rem;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: 1px;
+    transition: all 0.3s;
+    border-radius: 2px;
+}
+
+.btn-primary {
+    background: #1a1a1a;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: #333;
+}
+
+.btn-secondary {
+    background: transparent;
+    color: #1a1a1a;
+    border: 2px solid #1a1a1a;
+}
+
+.btn-secondary:hover {
+    background: #1a1a1a;
+    color: #fff;
+}
+
+.hero-stats {
+    display: flex;
+    gap: 6rem;
+    padding-top: 4rem;
+    border-top: 2px solid #e0e0e0;
+}
+
+.stat-item { }
+
+.stat-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 6rem;
+    font-weight: 900;
+    display: block;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 600;
+}
+
+/* Sections */
+section { padding: 10rem 0; }
+
+.section-header {
+    margin-bottom: 6rem;
+}
+
+.section-badge {
+    font-size: 0.85rem;
+    color: #666;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    display: block;
+}
+
+.section-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 5rem;
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 2rem;
+    letter-spacing: -2px;
+}
+
+/* Features - Text Heavy */
+.features {
+    background: #fff;
+    border-top: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+}
+
+.feature-card {
+    padding: 3rem 0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.feature-icon {
+    font-size: 3rem;
+    margin-bottom: 2rem;
+    opacity: 0.2;
+}
+
+.feature-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+}
+
+.feature-card p {
+    font-size: 1.2rem;
+    color: #666;
+    line-height: 1.8;
+    font-weight: 300;
+}
+
+/* Pricing - Minimal */
+.pricing { background: #fafafa; }
+
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+}
+
+.pricing-card {
+    padding: 6rem 4rem;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-right: none;
+    text-align: left;
+    transition: all 0.3s;
+}
+
+.pricing-card:last-child {
+    border-right: 1px solid #e0e0e0;
+}
+
+.pricing-card:hover {
+    background: #fafafa;
+    position: relative;
+    z-index: 10;
+}
+
+.pricing-card.popular {
+    background: #1a1a1a;
+    color: #fff;
+    border-color: #1a1a1a;
+    position: relative;
+    z-index: 10;
+}
+
+.popular-badge {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    color: #999;
+}
+
+.pricing-card.popular .popular-badge {
+    color: #999;
+}
+
+.pricing-header h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 3rem;
+}
+
+.price {
+    margin-bottom: 3rem;
+}
+
+.price .amount {
+    font-family: 'Playfair Display', serif;
+    font-size: 6rem;
+    font-weight: 900;
+    display: block;
+    line-height: 1;
+}
+
+.price .currency {
+    font-size: 1.5rem;
+    color: #666;
+    font-weight: 300;
+}
+
+.pricing-card.popular .price .currency {
+    color: #999;
+}
+
+.pricing-features {
+    list-style: none;
+    margin: 3rem 0;
+}
+
+.pricing-features li {
+    padding: 1.2rem 0;
+    font-size: 1.1rem;
+    border-bottom: 1px solid #e0e0e0;
+    font-weight: 300;
+}
+
+.pricing-card.popular .pricing-features li {
+    border-color: rgba(255,255,255,0.1);
+}
+
+.pricing-features i {
+    display: none;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 2px solid #1a1a1a;
+    color: #1a1a1a;
+    padding: 1.2rem 3rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 2rem;
+}
+
+.pricing-card.popular .btn-outline {
+    border-color: #fff;
+    color: #fff;
+}
+
+/* Contact */
+.contact { background: #fff; }
+
+.contact-form {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.contact-form input,
+.contact-form textarea {
+    width: 100%;
+    padding: 1.5rem;
+    background: #fafafa;
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    font-size: 1.1rem;
+    font-family: 'Inter', sans-serif;
+    margin-bottom: 2rem;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+    outline: none;
+    border-color: #1a1a1a;
+    background: #fff;
+}
+
+.contact-form textarea {
+    resize: vertical;
+}
+
+.btn-block {
+    width: 100%;
+    text-align: center;
+}
+
+/* Footer */
+.footer {
+    background: #1a1a1a;
+    color: #fff;
+    padding: 6rem 0;
+}
+
+.footer-content {
+    text-align: center;
+}
+
+.footer-brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    font-weight: 900;
+    font-style: italic;
+    margin-bottom: 2rem;
+}
+
+.footer p {
+    color: #999;
+    font-size: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .hero-title { font-size: 4.5rem; }
+    .section-header h2 { font-size: 3.5rem; }
+    .features-grid { grid-template-columns: 1fr; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .pricing-card { border-right: 1px solid #e0e0e0; }
+    .hero-stats { flex-direction: column; gap: 3rem; }
+    .form-row { grid-template-columns: 1fr; }
+}
