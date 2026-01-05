@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내 정보 - LMS 플랫폼</title>
+    <link rel="stylesheet" href="../common/css/style.css">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a href="index.html" class="logo">LMS 플랫폼</a>
+            <div class="user-info">
+                <span class="user-name" id="userName"></span>
+                <button class="btn btn-sm btn-secondary" onclick="logout()">로그아웃</button>
+            </div>
+        </div>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="index.html">대시보드</a></li>
+            <li><a href="courses.html">수강 과정</a></li>
+            <li><a href="exams.html">시험</a></li>
+            <li><a href="materials.html">교재</a></li>
+            <li><a href="my-profile.html" class="active">내 정보</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1 class="mt-2 mb-2">내 정보</h1>
+
+        <div class="card">
+            <div class="card-header">기본 정보</div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6">
+                        <p><strong>이름:</strong> <span id="fullName"></span></p>
+                        <p><strong>아이디:</strong> <span id="username"></span></p>
+                        <p><strong>이메일:</strong> <span id="email"></span></p>
+                    </div>
+                    <div class="col-6">
+                        <p><strong>전화번호:</strong> <span id="phone"></span></p>
+                        <p><strong>역할:</strong> <span id="role"></span></p>
+                        <p><strong>가입일:</strong> <span id="createdAt"></span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">수강 이력</div>
+            <div class="card-body">
+                <div id="enrollmentHistory">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">시험 성적</div>
+            <div class="card-body">
+                <div id="examHistory">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../common/js/api.js"></script>
+    <script src="../common/js/utils.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        let currentUser = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            currentUser = await checkAuth();
+            if (currentUser) {
+                document.getElementById('userName').textContent = currentUser.full_name;
+                loadProfile();
+            }
+        });
+
+        async function loadProfile() {
+            try {
+                const response = await StudentAPI.getById(currentUser.id);
+
+                if (response.success) {
+                    const student = response.student;
+
+                    // 기본 정보
+                    document.getElementById('fullName').textContent = student.full_name;
+                    document.getElementById('username').textContent = student.username;
+                    document.getElementById('email').textContent = student.email;
+                    document.getElementById('phone').textContent = student.phone || '-';
+                    document.getElementById('role').textContent = getRoleText(student.role);
+                    document.getElementById('createdAt').textContent = formatDate(student.created_at);
+
+                    // 수강 이력
+                    renderEnrollments(student.enrollments || []);
+
+                    // 시험 성적
+                    renderExamResults(student.exam_results || []);
+                }
+            } catch (error) {
+                showError('프로필 정보를 불러오는데 실패했습니다.');
+                console.error(error);
+            }
+        }
+
+        function getRoleText(role) {
+            const roleMap = {
+                'student': '학생',
+                'instructor': '강사',
+                'admin': '관리자',
+                'assistant': '조교',
+                'system_admin': '시스템 관리자'
+            };
+            return roleMap[role] || role;
+        }
+
+        function renderEnrollments(enrollments) {
+            const container = document.getElementById('enrollmentHistory');
+
+            if (enrollments.length === 0) {
+                container.innerHTML = '<p class="text-muted">수강 이력이 없습니다.</p>';
+                return;
+            }
+
+            const tableHtml = `
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>과정명</th>
+                            <th>반</th>
+                            <th>강사</th>
+                            <th>신청일</th>
+                            <th>상태</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${enrollments.map(e => `
+                            <tr>
+                                <td>${e.course_name}</td>
+                                <td>${e.class_name}</td>
+                                <td>${e.instructor_name || '-'}</td>
+                                <td>${formatDate(e.enrollment_date)}</td>
+                                <td><span class="badge ${getBadgeClass(e.status)}">${e.status}</span></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            container.innerHTML = tableHtml;
+        }
+
+        function renderExamResults(results) {
+            const container = document.getElementById('examHistory');
+
+            if (results.length === 0) {
+                container.innerHTML = '<p class="text-muted">시험 기록이 없습니다.</p>';
+                return;
+            }
+
+            const tableHtml = `
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>시험명</th>
+                            <th>점수</th>
+                            <th>합격선</th>
+                            <th>결과</th>
+                            <th>제출일</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${results.map(exam => {
+                            const passed = exam.score >= exam.pass_score;
+                            return `
+                                <tr>
+                                    <td>${exam.exam_name}</td>
+                                    <td><strong>${exam.score ? exam.score.toFixed(1) : '-'}</strong></td>
+                                    <td>${exam.pass_score}</td>
+                                    <td>
+                                        <span class="badge ${passed ? 'badge-success' : 'badge-danger'}">
+                                            ${passed ? '합격' : '불합격'}
+                                        </span>
+                                    </td>
+                                    <td>${formatDateTime(exam.submit_time)}</td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            container.innerHTML = tableHtml;
+        }
+    </script>
+</body>
+</html>

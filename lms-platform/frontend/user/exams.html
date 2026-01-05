@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>시험 - LMS 플랫폼</title>
+    <link rel="stylesheet" href="../common/css/style.css">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a href="index.html" class="logo">LMS 플랫폼</a>
+            <div class="user-info">
+                <span class="user-name" id="userName"></span>
+                <button class="btn btn-sm btn-secondary" onclick="logout()">로그아웃</button>
+            </div>
+        </div>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="index.html">대시보드</a></li>
+            <li><a href="courses.html">수강 과정</a></li>
+            <li><a href="exams.html" class="active">시험</a></li>
+            <li><a href="materials.html">교재</a></li>
+            <li><a href="my-profile.html">내 정보</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1 class="mt-2 mb-2">시험 목록</h1>
+
+        <div id="examsList">
+            <div class="spinner"></div>
+        </div>
+    </div>
+
+    <script src="../common/js/api.js"></script>
+    <script src="../common/js/utils.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        let currentUser = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            currentUser = await checkAuth();
+            if (currentUser) {
+                document.getElementById('userName').textContent = currentUser.full_name;
+                loadExams();
+            }
+        });
+
+        async function loadExams() {
+            try {
+                const response = await ExamAPI.getAll();
+
+                if (response.success) {
+                    renderExams(response.exams);
+                }
+            } catch (error) {
+                showError('시험 목록을 불러오는데 실패했습니다.');
+                console.error(error);
+            }
+        }
+
+        function renderExams(exams) {
+            const container = document.getElementById('examsList');
+
+            if (exams.length === 0) {
+                container.innerHTML = '<p class="text-muted">배정된 시험이 없습니다.</p>';
+                return;
+            }
+
+            const html = exams.map(exam => {
+                const now = new Date();
+                const startTime = new Date(exam.start_time);
+                const endTime = new Date(exam.end_time);
+                const canTake = now >= startTime && now <= endTime;
+
+                return `
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-8">
+                                    <h2>${exam.exam_name}</h2>
+                                    <p class="text-muted">${exam.description || ''}</p>
+                                    <p>
+                                        <strong>과정:</strong> ${exam.course_name || '-'}<br>
+                                        <strong>시험 기간:</strong> ${formatDateTime(exam.start_time)} ~ ${formatDateTime(exam.end_time)}<br>
+                                        <strong>시험 시간:</strong> ${exam.duration_minutes}분<br>
+                                        <strong>합격선:</strong> ${exam.pass_score}점<br>
+                                        <strong>재응시:</strong> ${exam.allow_retake ? '가능 (최대 ' + exam.max_retakes + '회)' : '불가'}
+                                    </p>
+                                </div>
+                                <div class="col-4 text-right">
+                                    ${canTake
+                                        ? `<button class="btn btn-primary" onclick="startExam(${exam.id})">시험 응시</button>`
+                                        : now < startTime
+                                            ? '<span class="badge badge-warning">시험 예정</span>'
+                                            : '<span class="badge badge-secondary">시험 종료</span>'
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = html;
+        }
+
+        async function startExam(examId) {
+            if (!confirm('시험을 시작하시겠습니까? 시작하면 제한 시간이 시작됩니다.')) {
+                return;
+            }
+
+            try {
+                showLoading();
+                const response = await ExamAPI.start(examId);
+
+                if (response.success) {
+                    showSuccess('시험이 시작되었습니다.');
+                    setTimeout(() => {
+                        window.location.href = `exam-take.html?examId=${examId}&attemptId=${response.attempt_id}`;
+                    }, 1000);
+                }
+            } catch (error) {
+                showError(error.message || '시험 시작 중 오류가 발생했습니다.');
+            } finally {
+                hideLoading();
+            }
+        }
+    </script>
+</body>
+</html>

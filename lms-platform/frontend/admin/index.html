@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 대시보드 - LMS 플랫폼</title>
+    <link rel="stylesheet" href="../common/css/style.css">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a href="index.html" class="logo">LMS 관리자</a>
+            <div class="user-info">
+                <span class="user-name" id="userName"></span>
+                <button class="btn btn-sm btn-secondary" onclick="logout()">로그아웃</button>
+            </div>
+        </div>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="index.html" class="active">대시보드</a></li>
+            <li><a href="courses.html">과정 관리</a></li>
+            <li><a href="students.html">학생 관리</a></li>
+            <li><a href="exams.html">시험 관리</a></li>
+            <li><a href="materials.html">교재 관리</a></li>
+            <li><a href="users.html">사용자 관리</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1 class="mt-2 mb-2">관리자 대시보드</h1>
+
+        <div class="row">
+            <div class="col-3">
+                <div class="card">
+                    <h3 style="color: var(--primary-color);">전체 학생</h3>
+                    <h2 id="totalStudents">-</h2>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="card">
+                    <h3 style="color: var(--success-color);">전체 과정</h3>
+                    <h2 id="totalCourses">-</h2>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="card">
+                    <h3 style="color: var(--warning-color);">진행 중 시험</h3>
+                    <h2 id="activeExams">-</h2>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="card">
+                    <h3 style="color: var(--danger-color);">등록 교재</h3>
+                    <h2 id="totalMaterials">-</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">최근 활동</div>
+            <div class="card-body">
+                <p class="text-muted">최근 활동 내역이 여기에 표시됩니다.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">공지사항 관리</div>
+            <div class="card-body">
+                <button class="btn btn-primary">새 공지사항 작성</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../common/js/api.js"></script>
+    <script src="../common/js/utils.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        let currentUser = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            currentUser = await checkAuth();
+            if (currentUser) {
+                // 권한 확인
+                if (!['admin', 'system_admin'].includes(currentUser.role)) {
+                    showError('관리자 권한이 필요합니다.');
+                    setTimeout(() => {
+                        window.location.href = '../user/index.html';
+                    }, 2000);
+                    return;
+                }
+
+                document.getElementById('userName').textContent = currentUser.full_name;
+                loadDashboard();
+            }
+        });
+
+        async function loadDashboard() {
+            try {
+                // 통계 데이터 로드
+                const [studentsRes, coursesRes, examsRes, materialsRes] = await Promise.all([
+                    StudentAPI.getAll(),
+                    CourseAPI.getAll(),
+                    ExamAPI.getAll(),
+                    MaterialAPI.getAll()
+                ]);
+
+                if (studentsRes.success) {
+                    document.getElementById('totalStudents').textContent = studentsRes.students.length;
+                }
+
+                if (coursesRes.success) {
+                    document.getElementById('totalCourses').textContent = coursesRes.courses.length;
+                }
+
+                if (examsRes.success) {
+                    const now = new Date();
+                    const activeExams = examsRes.exams.filter(exam => {
+                        const start = new Date(exam.start_time);
+                        const end = new Date(exam.end_time);
+                        return now >= start && now <= end;
+                    });
+                    document.getElementById('activeExams').textContent = activeExams.length;
+                }
+
+                if (materialsRes.success) {
+                    document.getElementById('totalMaterials').textContent = materialsRes.materials.length;
+                }
+            } catch (error) {
+                console.error('대시보드 로드 오류:', error);
+            }
+        }
+    </script>
+</body>
+</html>

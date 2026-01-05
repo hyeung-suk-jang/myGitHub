@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>학생 관리 - LMS 관리자</title>
+    <link rel="stylesheet" href="../common/css/style.css">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a href="index.html" class="logo">LMS 관리자</a>
+            <div class="user-info">
+                <span class="user-name" id="userName"></span>
+                <button class="btn btn-sm btn-secondary" onclick="logout()">로그아웃</button>
+            </div>
+        </div>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="index.html">대시보드</a></li>
+            <li><a href="courses.html">과정 관리</a></li>
+            <li><a href="students.html" class="active">학생 관리</a></li>
+            <li><a href="exams.html">시험 관리</a></li>
+            <li><a href="materials.html">교재 관리</a></li>
+            <li><a href="users.html">사용자 관리</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1 class="mt-2 mb-2">학생 관리</h1>
+
+        <div id="studentsList">
+            <div class="spinner"></div>
+        </div>
+    </div>
+
+    <script src="../common/js/api.js"></script>
+    <script src="../common/js/utils.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        let currentUser = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            currentUser = await checkAuth();
+            if (currentUser) {
+                if (!['admin', 'system_admin', 'instructor'].includes(currentUser.role)) {
+                    showError('권한이 없습니다.');
+                    setTimeout(() => window.location.href = '../user/index.html', 2000);
+                    return;
+                }
+                document.getElementById('userName').textContent = currentUser.full_name;
+                loadStudents();
+            }
+        });
+
+        async function loadStudents() {
+            try {
+                const response = await StudentAPI.getAll();
+                if (response.success) {
+                    renderStudents(response.students);
+                }
+            } catch (error) {
+                showError('학생 목록을 불러오는데 실패했습니다.');
+            }
+        }
+
+        function renderStudents(students) {
+            const container = document.getElementById('studentsList');
+
+            if (students.length === 0) {
+                container.innerHTML = '<p class="text-muted">등록된 학생이 없습니다.</p>';
+                return;
+            }
+
+            const html = `
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>이름</th>
+                            <th>아이디</th>
+                            <th>이메일</th>
+                            <th>전화번호</th>
+                            <th>가입일</th>
+                            <th>상태</th>
+                            <th>작업</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${students.map(student => `
+                            <tr>
+                                <td><strong>${student.full_name}</strong></td>
+                                <td>${student.username}</td>
+                                <td>${student.email}</td>
+                                <td>${student.phone || '-'}</td>
+                                <td>${formatDate(student.created_at)}</td>
+                                <td>
+                                    <span class="badge ${student.is_active ? 'badge-success' : 'badge-secondary'}">
+                                        ${student.is_active ? '활성' : '비활성'}
+                                    </span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary" onclick="viewStudent(${student.id})">상세보기</button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        function viewStudent(studentId) {
+            window.location.href = `student-detail.html?id=${studentId}`;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>교재 - LMS 플랫폼</title>
+    <link rel="stylesheet" href="../common/css/style.css">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a href="index.html" class="logo">LMS 플랫폼</a>
+            <div class="user-info">
+                <span class="user-name" id="userName"></span>
+                <button class="btn btn-sm btn-secondary" onclick="logout()">로그아웃</button>
+            </div>
+        </div>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="index.html">대시보드</a></li>
+            <li><a href="courses.html">수강 과정</a></li>
+            <li><a href="exams.html">시험</a></li>
+            <li><a href="materials.html" class="active">교재</a></li>
+            <li><a href="my-profile.html">내 정보</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1 class="mt-2 mb-2">교재 및 학습 자료</h1>
+
+        <!-- 검색 및 필터 -->
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6">
+                        <input type="text" id="searchInput" class="form-control" placeholder="제목, 태그 검색...">
+                    </div>
+                    <div class="col-3">
+                        <select id="typeFilter" class="form-control">
+                            <option value="">전체 유형</option>
+                            <option value="pdf">PDF</option>
+                            <option value="video">동영상</option>
+                            <option value="document">문서</option>
+                            <option value="link">링크</option>
+                        </select>
+                    </div>
+                    <div class="col-3">
+                        <select id="difficultyFilter" class="form-control">
+                            <option value="">전체 난이도</option>
+                            <option value="beginner">초급</option>
+                            <option value="intermediate">중급</option>
+                            <option value="advanced">고급</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn btn-primary mt-2" onclick="loadMaterials()">검색</button>
+            </div>
+        </div>
+
+        <div id="materialsList">
+            <div class="spinner"></div>
+        </div>
+    </div>
+
+    <script src="../common/js/api.js"></script>
+    <script src="../common/js/utils.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        let currentUser = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            currentUser = await checkAuth();
+            if (currentUser) {
+                document.getElementById('userName').textContent = currentUser.full_name;
+                loadMaterials();
+            }
+        });
+
+        async function loadMaterials() {
+            try {
+                const search = document.getElementById('searchInput').value;
+                const fileType = document.getElementById('typeFilter').value;
+                const difficulty = document.getElementById('difficultyFilter').value;
+
+                const params = {};
+                if (search) params.search = search;
+                if (fileType) params.file_type = fileType;
+                if (difficulty) params.difficulty = difficulty;
+
+                const response = await MaterialAPI.getAll(params);
+
+                if (response.success) {
+                    renderMaterials(response.materials);
+                }
+            } catch (error) {
+                showError('교재 목록을 불러오는데 실패했습니다.');
+                console.error(error);
+            }
+        }
+
+        function renderMaterials(materials) {
+            const container = document.getElementById('materialsList');
+
+            if (materials.length === 0) {
+                container.innerHTML = '<p class="text-muted">등록된 교재가 없습니다.</p>';
+                return;
+            }
+
+            const html = materials.map(material => {
+                const tags = material.tags ? JSON.parse(material.tags) : [];
+
+                return `
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-1 text-center">
+                                    <div style="font-size: 3rem;">${getFileIcon(material.file_type)}</div>
+                                </div>
+                                <div class="col-9">
+                                    <h2>${material.title}</h2>
+                                    <p class="text-muted">${material.description || ''}</p>
+                                    <p>
+                                        <strong>과정:</strong> ${material.course_name || '-'}<br>
+                                        <strong>난이도:</strong> ${getDifficultyText(material.difficulty)}<br>
+                                        <strong>버전:</strong> v${material.version}<br>
+                                        <strong>업로드:</strong> ${formatDate(material.upload_date)} (${material.uploader_name || '-'})
+                                    </p>
+                                    ${tags.length > 0 ? `
+                                        <div>
+                                            ${tags.map(tag => `<span class="badge badge-secondary">${tag}</span>`).join(' ')}
+                                        </div>
+                                    ` : ''}
+                                </div>
+                                <div class="col-2 text-right">
+                                    ${material.video_url
+                                        ? `<a href="${material.video_url}" target="_blank" class="btn btn-primary btn-sm">영상 보기</a>`
+                                        : `<button class="btn btn-primary btn-sm" onclick="viewMaterial(${material.id})">열기</button>`
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = html;
+        }
+
+        function viewMaterial(materialId) {
+            showSuccess('교재 뷰어 기능은 추후 구현 예정입니다.');
+        }
+    </script>
+</body>
+</html>

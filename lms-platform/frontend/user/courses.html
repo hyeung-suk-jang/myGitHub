@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>수강 과정 - LMS 플랫폼</title>
+    <link rel="stylesheet" href="../common/css/style.css">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a href="index.html" class="logo">LMS 플랫폼</a>
+            <div class="user-info">
+                <span class="user-name" id="userName"></span>
+                <button class="btn btn-sm btn-secondary" onclick="logout()">로그아웃</button>
+            </div>
+        </div>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="index.html">대시보드</a></li>
+            <li><a href="courses.html" class="active">수강 과정</a></li>
+            <li><a href="exams.html">시험</a></li>
+            <li><a href="materials.html">교재</a></li>
+            <li><a href="my-profile.html">내 정보</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1 class="mt-2 mb-2">수강 과정</h1>
+
+        <div id="coursesList">
+            <div class="spinner"></div>
+        </div>
+    </div>
+
+    <!-- 수강 신청 모달 -->
+    <div id="enrollModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">수강 신청</h2>
+                <button class="close" onclick="closeModal('enrollModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h3 id="modalCourseName"></h3>
+                <p id="modalCourseDesc" class="text-muted"></p>
+
+                <div class="form-group mt-2">
+                    <label class="form-label">반 선택</label>
+                    <select id="classSelect" class="form-control">
+                        <option value="">반을 선택하세요</option>
+                    </select>
+                </div>
+
+                <button class="btn btn-primary" onclick="submitEnrollment()">수강 신청</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../common/js/api.js"></script>
+    <script src="../common/js/utils.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        let currentUser = null;
+        let selectedCourse = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            currentUser = await checkAuth();
+            if (currentUser) {
+                document.getElementById('userName').textContent = currentUser.full_name;
+                loadCourses();
+            }
+        });
+
+        async function loadCourses() {
+            try {
+                const response = await CourseAPI.getAll();
+
+                if (response.success) {
+                    renderCourses(response.courses);
+                }
+            } catch (error) {
+                showError('과정 목록을 불러오는데 실패했습니다.');
+                console.error(error);
+            }
+        }
+
+        function renderCourses(courses) {
+            const container = document.getElementById('coursesList');
+
+            if (courses.length === 0) {
+                container.innerHTML = '<p class="text-muted">개설된 과정이 없습니다.</p>';
+                return;
+            }
+
+            const html = courses.map(course => `
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-8">
+                                <h2>${course.course_name}</h2>
+                                <p><strong>과정 코드:</strong> ${course.course_code}</p>
+                                <p class="text-muted">${course.description || ''}</p>
+                                <p>
+                                    <strong>기간:</strong> ${formatDate(course.start_date)} ~ ${formatDate(course.end_date)}<br>
+                                    <strong>정원:</strong> ${course.max_students}명
+                                </p>
+                            </div>
+                            <div class="col-4 text-right">
+                                <button class="btn btn-primary" onclick="openEnrollModal(${course.id})">
+                                    수강 신청
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = html;
+        }
+
+        async function openEnrollModal(courseId) {
+            try {
+                showLoading();
+                const response = await CourseAPI.getById(courseId);
+
+                if (response.success) {
+                    selectedCourse = response.course;
+
+                    document.getElementById('modalCourseName').textContent = selectedCourse.course_name;
+                    document.getElementById('modalCourseDesc').textContent = selectedCourse.description || '';
+
+                    // 반 목록 채우기
+                    const classSelect = document.getElementById('classSelect');
+                    classSelect.innerHTML = '<option value="">반을 선택하세요</option>';
+
+                    if (selectedCourse.classes && selectedCourse.classes.length > 0) {
+                        selectedCourse.classes.forEach(cls => {
+                            const option = document.createElement('option');
+                            option.value = cls.id;
+                            option.textContent = `${cls.class_name} (강사: ${cls.instructor_name || '-'})`;
+                            classSelect.appendChild(option);
+                        });
+                    } else {
+                        classSelect.innerHTML = '<option value="">개설된 반이 없습니다</option>';
+                    }
+
+                    openModal('enrollModal');
+                }
+            } catch (error) {
+                showError('과정 정보를 불러오는데 실패했습니다.');
+                console.error(error);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function submitEnrollment() {
+            const classId = document.getElementById('classSelect').value;
+
+            if (!classId) {
+                showError('반을 선택해주세요.');
+                return;
+            }
+
+            try {
+                showLoading();
+                const response = await CourseAPI.enroll(selectedCourse.id, classId);
+
+                if (response.success) {
+                    showSuccess('수강 신청이 완료되었습니다!');
+                    closeModal('enrollModal');
+                }
+            } catch (error) {
+                showError(error.message || '수강 신청 중 오류가 발생했습니다.');
+            } finally {
+                hideLoading();
+            }
+        }
+    </script>
+</body>
+</html>
