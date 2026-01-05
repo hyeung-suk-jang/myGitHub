@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사용자 관리 - LMS 관리자</title>
+    <link rel="stylesheet" href="../common/css/style.css">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a href="index.html" class="logo">LMS 관리자</a>
+            <div class="user-info">
+                <span class="user-name" id="userName"></span>
+                <button class="btn btn-sm btn-secondary" onclick="logout()">로그아웃</button>
+            </div>
+        </div>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="index.html">대시보드</a></li>
+            <li><a href="courses.html">과정 관리</a></li>
+            <li><a href="students.html">학생 관리</a></li>
+            <li><a href="exams.html">시험 관리</a></li>
+            <li><a href="materials.html">교재 관리</a></li>
+            <li><a href="users.html" class="active">사용자 관리</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin: 20px 0;">
+            <h1>사용자 관리</h1>
+            <button class="btn btn-primary" onclick="openUserModal()">새 사용자 등록</button>
+        </div>
+
+        <div class="card mb-2">
+            <div class="card-body">
+                <label class="form-label">역할 필터</label>
+                <select id="roleFilter" class="form-control" onchange="filterUsers()">
+                    <option value="">전체</option>
+                    <option value="student">학생</option>
+                    <option value="instructor">강사</option>
+                    <option value="admin">관리자</option>
+                    <option value="assistant">조교</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="usersList">
+            <p class="text-muted">사용자 목록 기능은 추후 구현 예정입니다.</p>
+        </div>
+    </div>
+
+    <!-- 사용자 등록 모달 -->
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">새 사용자 등록</h2>
+                <button class="close" onclick="closeModal('userModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="userForm">
+                    <div class="form-group">
+                        <label class="form-label">아이디</label>
+                        <input type="text" id="username" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">비밀번호</label>
+                        <input type="password" id="password" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">이름</label>
+                        <input type="text" id="fullName" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">이메일</label>
+                        <input type="email" id="email" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">전화번호</label>
+                        <input type="tel" id="phone" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">역할</label>
+                        <select id="role" class="form-control" required>
+                            <option value="student">학생</option>
+                            <option value="instructor">강사</option>
+                            <option value="assistant">조교</option>
+                            <option value="admin">관리자</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">등록</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="../common/js/api.js"></script>
+    <script src="../common/js/utils.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        let currentUser = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            currentUser = await checkAuth();
+            if (currentUser) {
+                if (!['admin', 'system_admin'].includes(currentUser.role)) {
+                    showError('시스템 관리자 권한이 필요합니다.');
+                    setTimeout(() => window.location.href = 'index.html', 2000);
+                    return;
+                }
+                document.getElementById('userName').textContent = currentUser.full_name;
+            }
+        });
+
+        document.getElementById('userForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await createUser();
+        });
+
+        function openUserModal() {
+            document.getElementById('userForm').reset();
+            openModal('userModal');
+        }
+
+        async function createUser() {
+            const userData = {
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value,
+                full_name: document.getElementById('fullName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                role: document.getElementById('role').value
+            };
+
+            try {
+                showLoading();
+                const response = await AuthAPI.register(userData);
+
+                if (response.success) {
+                    showSuccess('사용자가 등록되었습니다.');
+                    closeModal('userModal');
+                }
+            } catch (error) {
+                showError(error.message || '사용자 등록 중 오류가 발생했습니다.');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function filterUsers() {
+            showSuccess('필터 기능은 추후 구현 예정입니다.');
+        }
+    </script>
+</body>
+</html>

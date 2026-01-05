@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>대시보드 - LMS 플랫폼</title>
+    <link rel="stylesheet" href="../common/css/style.css">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a href="index.html" class="logo">LMS 플랫폼</a>
+            <div class="user-info">
+                <span class="user-name" id="userName"></span>
+                <button class="btn btn-sm btn-secondary" onclick="logout()">로그아웃</button>
+            </div>
+        </div>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="index.html" class="active">대시보드</a></li>
+            <li><a href="courses.html">수강 과정</a></li>
+            <li><a href="exams.html">시험</a></li>
+            <li><a href="materials.html">교재</a></li>
+            <li><a href="my-profile.html">내 정보</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1 class="mt-2 mb-2">대시보드</h1>
+
+        <!-- 출결 통계 -->
+        <div class="row">
+            <div class="col-3">
+                <div class="card">
+                    <h3 style="color: var(--success-color); margin-bottom: 10px;">출석</h3>
+                    <h2 id="attendPresent">0</h2>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="card">
+                    <h3 style="color: var(--danger-color); margin-bottom: 10px;">결석</h3>
+                    <h2 id="attendAbsent">0</h2>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="card">
+                    <h3 style="color: var(--warning-color); margin-bottom: 10px;">지각</h3>
+                    <h2 id="attendLate">0</h2>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="card">
+                    <h3 style="color: var(--primary-color); margin-bottom: 10px;">출석률</h3>
+                    <h2 id="attendRate">0%</h2>
+                </div>
+            </div>
+        </div>
+
+        <!-- 수강 중인 과정 -->
+        <div class="card">
+            <div class="card-header">수강 중인 과정</div>
+            <div class="card-body">
+                <div id="enrollmentsList">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 최근 시험 결과 -->
+        <div class="card">
+            <div class="card-header">최근 시험 결과</div>
+            <div class="card-body">
+                <div id="examResultsList">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 학습 진도 -->
+        <div class="card">
+            <div class="card-header">학습 진도</div>
+            <div class="card-body">
+                <div id="progressList">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../common/js/api.js"></script>
+    <script src="../common/js/utils.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        let currentUser = null;
+
+        // 페이지 로드 시 인증 확인
+        document.addEventListener('DOMContentLoaded', async () => {
+            currentUser = await checkAuth();
+            if (currentUser) {
+                document.getElementById('userName').textContent = currentUser.full_name;
+                loadDashboard();
+            }
+        });
+
+        async function loadDashboard() {
+            try {
+                const response = await StudentAPI.getDashboard();
+
+                if (response.success) {
+                    const data = response.dashboard;
+
+                    // 출결 통계
+                    const attendStats = data.attendance_stats || { total: 0, present: 0, absent: 0, late: 0 };
+                    document.getElementById('attendPresent').textContent = attendStats.present || 0;
+                    document.getElementById('attendAbsent').textContent = attendStats.absent || 0;
+                    document.getElementById('attendLate').textContent = attendStats.late || 0;
+
+                    const attendRate = attendStats.total > 0
+                        ? Math.round((attendStats.present / attendStats.total) * 100)
+                        : 0;
+                    document.getElementById('attendRate').textContent = attendRate + '%';
+
+                    // 수강 중인 과정
+                    renderEnrollments(data.enrollments || []);
+
+                    // 최근 시험 결과
+                    renderExamResults(data.recent_exams || []);
+
+                    // 학습 진도
+                    renderProgress(data.progress || []);
+                }
+            } catch (error) {
+                showError('대시보드 정보를 불러오는데 실패했습니다.');
+                console.error(error);
+            }
+        }
+
+        function renderEnrollments(enrollments) {
+            const container = document.getElementById('enrollmentsList');
+
+            if (enrollments.length === 0) {
+                container.innerHTML = '<p class="text-muted">수강 중인 과정이 없습니다.</p>';
+                return;
+            }
+
+            const html = enrollments.map(enrollment => `
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <h3>${enrollment.course_name} - ${enrollment.class_name}</h3>
+                        <p class="text-muted">강사: ${enrollment.instructor_name || '-'}</p>
+                        <span class="badge ${getBadgeClass(enrollment.status)}">${enrollment.status}</span>
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = html;
+        }
+
+        function renderExamResults(exams) {
+            const container = document.getElementById('examResultsList');
+
+            if (exams.length === 0) {
+                container.innerHTML = '<p class="text-muted">최근 시험 결과가 없습니다.</p>';
+                return;
+            }
+
+            const tableHtml = `
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>시험명</th>
+                            <th>점수</th>
+                            <th>합격선</th>
+                            <th>결과</th>
+                            <th>제출일</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${exams.map(exam => {
+                            const passed = exam.score >= exam.pass_score;
+                            return `
+                                <tr>
+                                    <td>${exam.exam_name}</td>
+                                    <td><strong>${exam.score ? exam.score.toFixed(1) : '-'}</strong></td>
+                                    <td>${exam.pass_score}</td>
+                                    <td>
+                                        <span class="badge ${passed ? 'badge-success' : 'badge-danger'}">
+                                            ${passed ? '합격' : '불합격'}
+                                        </span>
+                                    </td>
+                                    <td>${formatDateTime(exam.submit_time)}</td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            container.innerHTML = tableHtml;
+        }
+
+        function renderProgress(progressList) {
+            const container = document.getElementById('progressList');
+
+            if (progressList.length === 0) {
+                container.innerHTML = '<p class="text-muted">학습 진도 정보가 없습니다.</p>';
+                return;
+            }
+
+            const html = progressList.map(item => `
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h4>${item.material_title}</h4>
+                                <p class="text-muted">마지막 학습: ${formatDateTime(item.last_accessed)}</p>
+                            </div>
+                            <div>
+                                <strong>${item.progress_percentage || 0}%</strong>
+                                ${item.completed ? '<span class="badge badge-success ml-1">완료</span>' : ''}
+                            </div>
+                        </div>
+                        <div style="background: var(--light-color); height: 8px; border-radius: 4px; margin-top: 10px;">
+                            <div style="background: var(--primary-color); height: 100%; width: ${item.progress_percentage || 0}%; border-radius: 4px;"></div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

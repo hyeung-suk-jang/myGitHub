@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>시험 관리 - LMS 관리자</title>
+    <link rel="stylesheet" href="../common/css/style.css">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a href="index.html" class="logo">LMS 관리자</a>
+            <div class="user-info">
+                <span class="user-name" id="userName"></span>
+                <button class="btn btn-sm btn-secondary" onclick="logout()">로그아웃</button>
+            </div>
+        </div>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="index.html">대시보드</a></li>
+            <li><a href="courses.html">과정 관리</a></li>
+            <li><a href="students.html">학생 관리</a></li>
+            <li><a href="exams.html" class="active">시험 관리</a></li>
+            <li><a href="materials.html">교재 관리</a></li>
+            <li><a href="users.html">사용자 관리</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin: 20px 0;">
+            <h1>시험 관리</h1>
+            <button class="btn btn-primary" onclick="createExam()">새 시험 생성</button>
+        </div>
+
+        <div class="card mb-2">
+            <div class="card-body">
+                <h3>문제 은행</h3>
+                <p class="text-muted">시험에 사용할 문제들을 관리합니다.</p>
+                <button class="btn btn-secondary" onclick="manageQuestions()">문제 은행 관리</button>
+            </div>
+        </div>
+
+        <div id="examsList">
+            <div class="spinner"></div>
+        </div>
+    </div>
+
+    <script src="../common/js/api.js"></script>
+    <script src="../common/js/utils.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        let currentUser = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            currentUser = await checkAuth();
+            if (currentUser) {
+                if (!['admin', 'system_admin', 'instructor'].includes(currentUser.role)) {
+                    showError('권한이 없습니다.');
+                    setTimeout(() => window.location.href = '../user/index.html', 2000);
+                    return;
+                }
+                document.getElementById('userName').textContent = currentUser.full_name;
+                loadExams();
+            }
+        });
+
+        async function loadExams() {
+            try {
+                const response = await ExamAPI.getAll();
+                if (response.success) {
+                    renderExams(response.exams);
+                }
+            } catch (error) {
+                showError('시험 목록을 불러오는데 실패했습니다.');
+            }
+        }
+
+        function renderExams(exams) {
+            const container = document.getElementById('examsList');
+
+            if (exams.length === 0) {
+                container.innerHTML = '<p class="text-muted">생성된 시험이 없습니다.</p>';
+                return;
+            }
+
+            const html = `
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>시험명</th>
+                            <th>과정</th>
+                            <th>시험 기간</th>
+                            <th>시간</th>
+                            <th>합격선</th>
+                            <th>생성자</th>
+                            <th>작업</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${exams.map(exam => `
+                            <tr>
+                                <td><strong>${exam.exam_name}</strong></td>
+                                <td>${exam.course_name || '-'}</td>
+                                <td>${formatDateTime(exam.start_time)} ~ ${formatDateTime(exam.end_time)}</td>
+                                <td>${exam.duration_minutes}분</td>
+                                <td>${exam.pass_score}점</td>
+                                <td>${exam.creator_name || '-'}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary" onclick="viewExam(${exam.id})">상세보기</button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        function createExam() {
+            showSuccess('시험 생성 기능은 추후 구현 예정입니다.');
+        }
+
+        function manageQuestions() {
+            window.location.href = 'questions.html';
+        }
+
+        function viewExam(examId) {
+            showSuccess('시험 상세 보기 기능은 추후 구현 예정입니다.');
+        }
+    </script>
+</body>
+</html>
