@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>jqGrid 게시판</title>
+
+    <!-- jQuery UI Theme -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/smoothness/jquery-ui.css">
+    <!-- jqGrid CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/free-jqgrid@4.15.5/css/ui.jqgrid.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="wrap">
+    <header id="site-header">
+        <div class="header-inner">
+            <h1 class="site-title">&#128196; 공지사항 게시판</h1>
+            <p class="site-desc">최신 공지 및 안내사항을 확인하세요.</p>
+        </div>
+    </header>
+
+    <div id="board-wrap">
+
+        <!-- 검색 영역 -->
+        <div id="search-bar">
+            <div class="search-left">
+                <span class="total-count">전체 <strong id="total-num">0</strong>건</span>
+            </div>
+            <div class="search-right">
+                <select id="search-type">
+                    <option value="title">제목</option>
+                    <option value="author">작성자</option>
+                    <option value="content">내용</option>
+                    <option value="all">전체</option>
+                </select>
+                <input type="text" id="search-keyword" placeholder="검색어를 입력하세요" autocomplete="off">
+                <button id="btn-search" class="btn btn-search">검색</button>
+                <button id="btn-reset" class="btn btn-reset">초기화</button>
+            </div>
+        </div>
+
+        <!-- 버튼 영역 -->
+        <div id="btn-toolbar">
+            <div class="toolbar-left">
+                <button id="btn-add" class="btn btn-primary">&#43; 글쓰기</button>
+                <button id="btn-edit" class="btn btn-secondary">&#9998; 수정</button>
+                <button id="btn-delete" class="btn btn-danger">&#128465; 삭제</button>
+            </div>
+            <div class="toolbar-right">
+                <label for="rows-per-page">목록 수:</label>
+                <select id="rows-per-page">
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="30">30</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- 그리드 -->
+        <div id="grid-container">
+            <table id="board-grid"></table>
+            <div id="board-pager"></div>
+        </div>
+
+    </div><!-- /board-wrap -->
+</div><!-- /wrap -->
+
+<!-- ===================== 글쓰기 / 수정 모달 ===================== -->
+<div id="form-modal" style="display:none;">
+    <form id="post-form" autocomplete="off">
+        <input type="hidden" id="f-id">
+        <table class="form-table">
+            <colgroup>
+                <col style="width:110px">
+                <col>
+            </colgroup>
+            <tbody>
+                <tr>
+                    <th><label for="f-category">분류</label></th>
+                    <td>
+                        <select id="f-category" class="form-select">
+                            <option value="공지">공지</option>
+                            <option value="일반">일반</option>
+                            <option value="FAQ">FAQ</option>
+                            <option value="이벤트">이벤트</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th><label for="f-title">제목 <span class="req">*</span></label></th>
+                    <td><input type="text" id="f-title" class="form-input" placeholder="제목을 입력하세요" maxlength="100"></td>
+                </tr>
+                <tr>
+                    <th><label for="f-author">작성자 <span class="req">*</span></label></th>
+                    <td><input type="text" id="f-author" class="form-input" placeholder="작성자를 입력하세요" maxlength="30"></td>
+                </tr>
+                <tr>
+                    <th><label for="f-content">내용</label></th>
+                    <td><textarea id="f-content" class="form-textarea" rows="8" placeholder="내용을 입력하세요"></textarea></td>
+                </tr>
+                <tr>
+                    <th><label for="f-hasfile">첨부파일</label></th>
+                    <td>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="f-hasfile"> 첨부파일 있음 (샘플)
+                        </label>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+</div>
+
+<!-- ===================== 상세보기 모달 ===================== -->
+<div id="view-modal" style="display:none;">
+    <div id="view-content-wrap">
+        <table class="view-table">
+            <colgroup>
+                <col style="width:110px">
+                <col>
+            </colgroup>
+            <tbody>
+                <tr>
+                    <th>분류</th>
+                    <td><span id="v-category" class="badge"></span></td>
+                </tr>
+                <tr>
+                    <th>제목</th>
+                    <td id="v-title" class="v-title-td"></td>
+                </tr>
+                <tr>
+                    <th>작성자</th>
+                    <td id="v-author"></td>
+                </tr>
+                <tr>
+                    <th>등록일 / 조회수</th>
+                    <td><span id="v-date"></span> &nbsp;|&nbsp; 조회 <strong id="v-views"></strong></td>
+                </tr>
+                <tr>
+                    <th>첨부파일</th>
+                    <td id="v-file"></td>
+                </tr>
+                <tr>
+                    <th>내용</th>
+                    <td><div id="v-content" class="v-content-body"></div></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<!-- jQuery UI -->
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+<!-- jqGrid -->
+<script src="https://cdn.jsdelivr.net/npm/free-jqgrid@4.15.5/js/jquery.jqgrid.min.js"></script>
+<!-- jqGrid 한국어 locale -->
+<script src="https://cdn.jsdelivr.net/npm/free-jqgrid@4.15.5/js/i18n/grid.locale-kr.js"></script>
+<!-- Custom JS -->
+<script src="js/board.js"></script>
+
+</body>
+</html>
