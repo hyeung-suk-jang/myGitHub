@@ -1,0 +1,55 @@
+@use '@/styles/variables/colors' as *;
+@use '@/styles/variables/spacing' as *;
+
+.wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid $color-border-default;
+  border-radius: $radius-lg;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: $font-size-sm;
+}
+
+.thead {
+  background-color: $color-bg-secondary;
+}
+
+.th {
+  padding: $spacing-3 $spacing-4;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  color: $color-text-secondary;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid $color-border-default;
+  white-space: nowrap;
+}
+
+.tr {
+  border-bottom: 1px solid $color-border-default;
+  transition: background-color 0.1s;
+
+  &:last-child { border-bottom: none; }
+  &:hover { background-color: $color-bg-secondary; }
+}
+
+.td {
+  padding: $spacing-3 $spacing-4;
+  color: $color-text-primary;
+  vertical-align: middle;
+}
+
+.stateCell {
+  padding: $spacing-10 $spacing-4;
+  text-align: center;
+}
+
+.loading,
+.empty {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}

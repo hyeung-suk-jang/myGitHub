@@ -1,0 +1,34 @@
+@use '@/styles/variables/colors' as *;
+@use '@/styles/variables/spacing' as *;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}
+
+.title {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  text-align: center;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}
+
+.loginLink {
+  text-align: center;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+
+  a {
+    color: $color-primary-600;
+    font-weight: $font-weight-medium;
+
+    &:hover { text-decoration: underline; }
+  }
+}

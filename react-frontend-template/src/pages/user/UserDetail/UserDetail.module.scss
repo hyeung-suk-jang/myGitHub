@@ -1,0 +1,60 @@
+@use '@/styles/variables/colors' as *;
+@use '@/styles/variables/spacing' as *;
+@use '@/styles/mixins/flex' as *;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-6;
+}
+
+.header {
+  @include flex-between;
+}
+
+.title {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+}
+
+.actions {
+  @include flex-start;
+  gap: $spacing-2;
+}
+
+.card {
+  background-color: $color-bg-primary;
+  border: 1px solid $color-border-default;
+  border-radius: $radius-lg;
+  padding: $spacing-6;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: $spacing-4;
+  padding: $spacing-3 0;
+  border-bottom: 1px solid $color-border-default;
+
+  &:last-child { border-bottom: none; }
+}
+
+.label {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-text-secondary;
+}
+
+.value {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+}
+
+.loading {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}

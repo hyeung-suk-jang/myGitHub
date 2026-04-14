@@ -1,0 +1,36 @@
+@use '@/styles/variables/colors' as *;
+@use '@/styles/variables/spacing' as *;
+@use '@/styles/mixins/flex' as *;
+
+.header {
+  @include flex-between;
+  height: 60px;
+  padding: 0 $spacing-6;
+  background-color: $color-bg-primary;
+  border-bottom: 1px solid $color-border-default;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+}
+
+.left,
+.right {
+  @include flex-start;
+  gap: $spacing-2;
+}
+
+.menuButton,
+.iconButton {
+  @include flex-center;
+  width: 36px;
+  height: 36px;
+  border-radius: $radius-md;
+  font-size: $font-size-base;
+  color: $color-text-secondary;
+  transition: background-color 0.15s;
+
+  &:hover {
+    background-color: $color-gray-100;
+    color: $color-text-primary;
+  }
+}

@@ -1,0 +1,19 @@
+@use '@/styles/variables/colors' as *;
+@use '@/styles/variables/spacing' as *;
+@use '@/styles/mixins/flex' as *;
+
+.layout {
+  @include flex-center;
+  min-height: 100vh;
+  background-color: $color-bg-secondary;
+  padding: $spacing-4;
+}
+
+.card {
+  width: 100%;
+  max-width: 400px;
+  background-color: $color-bg-primary;
+  border-radius: $radius-xl;
+  padding: $spacing-8;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+}

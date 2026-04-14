@@ -1,0 +1,33 @@
+@use '@/styles/variables/colors' as *;
+@use '@/styles/variables/spacing' as *;
+@use '@/styles/mixins/flex' as *;
+
+.container {
+  @include flex-column-center;
+  gap: $spacing-4;
+  min-height: 400px;
+  padding: $spacing-8;
+  text-align: center;
+}
+
+.icon {
+  font-size: 48px;
+}
+
+.title {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+}
+
+.message {
+  font-size: $font-size-base;
+  color: $color-text-secondary;
+  max-width: 400px;
+}
+
+.actions {
+  @include flex-center;
+  gap: $spacing-3;
+  margin-top: $spacing-2;
+}

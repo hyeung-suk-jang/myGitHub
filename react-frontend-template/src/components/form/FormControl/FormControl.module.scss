@@ -1,0 +1,29 @@
+@use '@/styles/variables/colors' as *;
+@use '@/styles/variables/spacing' as *;
+
+.formControl {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-1;
+  width: 100%;
+}
+
+.label {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+}
+
+.required {
+  color: $color-error;
+}
+
+.error {
+  font-size: $font-size-sm;
+  color: $color-error;
+}
+
+.hint {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}

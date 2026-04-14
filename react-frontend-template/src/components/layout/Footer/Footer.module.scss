@@ -1,0 +1,16 @@
+@use '@/styles/variables/colors' as *;
+@use '@/styles/variables/spacing' as *;
+@use '@/styles/mixins/flex' as *;
+
+.footer {
+  @include flex-center;
+  height: 52px;
+  padding: 0 $spacing-6;
+  border-top: 1px solid $color-border-default;
+  background-color: $color-bg-primary;
+}
+
+.copyright {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}

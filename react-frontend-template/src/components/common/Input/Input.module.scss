@@ -1,0 +1,103 @@
+@use '@/styles/variables/colors' as *;
+@use '@/styles/variables/spacing' as *;
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-1;
+  width: 100%;
+}
+
+.label {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+}
+
+.required {
+  color: $color-error;
+}
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input {
+  width: 100%;
+  border: 1px solid $color-border-default;
+  border-radius: $radius-md;
+  background-color: $color-bg-primary;
+  color: $color-text-primary;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+
+  &::placeholder {
+    color: $color-text-disabled;
+  }
+
+  &:focus {
+    border-color: $color-border-focus;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  }
+
+  &:disabled {
+    background-color: $color-bg-tertiary;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+}
+
+// Sizes
+.sm {
+  padding: $spacing-1 $spacing-3;
+  font-size: $font-size-sm;
+  height: 32px;
+}
+
+.md {
+  padding: $spacing-2 $spacing-3;
+  font-size: $font-size-base;
+  height: 40px;
+}
+
+.lg {
+  padding: $spacing-3 $spacing-4;
+  font-size: $font-size-lg;
+  height: 48px;
+}
+
+.hasError {
+  border-color: $color-border-error;
+
+  &:focus {
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+  }
+}
+
+.hasLeft  { padding-left: 36px; }
+.hasRight { padding-right: 36px; }
+
+.leftIcon,
+.rightIcon {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: $color-text-secondary;
+  display: flex;
+  align-items: center;
+}
+
+.leftIcon  { left: $spacing-3; }
+.rightIcon { right: $spacing-3; }
+
+.error {
+  font-size: $font-size-sm;
+  color: $color-error;
+}
+
+.hint {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}

@@ -1,0 +1,36 @@
+@use '@/styles/variables/colors' as *;
+@use '@/styles/variables/spacing' as *;
+@use '@/styles/mixins/flex' as *;
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-1;
+}
+
+.label {
+  @include flex-start;
+  gap: $spacing-2;
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox {
+  width: 16px;
+  height: 16px;
+  border: 2px solid $color-border-default;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  accent-color: $color-primary-600;
+  flex-shrink: 0;
+}
+
+.labelText {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+}
+
+.error {
+  font-size: $font-size-sm;
+  color: $color-error;
+}

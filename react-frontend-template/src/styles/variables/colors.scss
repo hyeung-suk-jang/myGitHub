@@ -1,0 +1,55 @@
+// ============================================================
+// Color Variables
+// ============================================================
+
+// Primary
+$color-primary-50:  #eff6ff;
+$color-primary-100: #dbeafe;
+$color-primary-200: #bfdbfe;
+$color-primary-300: #93c5fd;
+$color-primary-400: #60a5fa;
+$color-primary-500: #3b82f6;
+$color-primary-600: #2563eb;
+$color-primary-700: #1d4ed8;
+$color-primary-800: #1e40af;
+$color-primary-900: #1e3a8a;
+
+// Secondary
+$color-secondary-500: #8b5cf6;
+$color-secondary-600: #7c3aed;
+
+// Semantic
+$color-success: #22c55e;
+$color-warning: #f59e0b;
+$color-error:   #ef4444;
+$color-info:    #3b82f6;
+
+// Neutral / Gray
+$color-white:    #ffffff;
+$color-black:    #000000;
+$color-gray-50:  #f9fafb;
+$color-gray-100: #f3f4f6;
+$color-gray-200: #e5e7eb;
+$color-gray-300: #d1d5db;
+$color-gray-400: #9ca3af;
+$color-gray-500: #6b7280;
+$color-gray-600: #4b5563;
+$color-gray-700: #374151;
+$color-gray-800: #1f2937;
+$color-gray-900: #111827;
+
+// Background
+$color-bg-primary:   $color-white;
+$color-bg-secondary: $color-gray-50;
+$color-bg-tertiary:  $color-gray-100;
+
+// Text
+$color-text-primary:   $color-gray-900;
+$color-text-secondary: $color-gray-600;
+$color-text-disabled:  $color-gray-400;
+$color-text-inverse:   $color-white;
+
+// Border
+$color-border-default: $color-gray-200;
+$color-border-focus:   $color-primary-500;
+$color-border-error:   $color-error;

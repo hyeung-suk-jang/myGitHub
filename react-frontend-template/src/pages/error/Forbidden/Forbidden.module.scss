@@ -1,0 +1,30 @@
+@use '@/styles/variables/colors' as *;
+@use '@/styles/variables/spacing' as *;
+@use '@/styles/mixins/flex' as *;
+
+.container {
+  @include flex-column-center;
+  gap: $spacing-4;
+  min-height: 100vh;
+  text-align: center;
+  padding: $spacing-8;
+}
+
+.code {
+  font-size: 96px;
+  font-weight: $font-weight-bold;
+  color: $color-warning;
+  line-height: 1;
+}
+
+.title {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+}
+
+.description {
+  font-size: $font-size-base;
+  color: $color-text-secondary;
+  max-width: 400px;
+}

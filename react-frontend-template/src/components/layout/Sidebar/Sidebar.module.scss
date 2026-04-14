@@ -1,0 +1,60 @@
+@use '@/styles/variables/colors' as *;
+@use '@/styles/variables/spacing' as *;
+
+.sidebar {
+  height: 100%;
+  background-color: $color-gray-900;
+  color: $color-white;
+  transition: width 0.2s ease;
+  overflow: hidden;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.open   { width: 240px; }
+.closed { width: 0; }
+
+.logo {
+  padding: $spacing-5 $spacing-6;
+  border-bottom: 1px solid $color-gray-700;
+}
+
+.logoText {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $color-white;
+  white-space: nowrap;
+}
+
+.nav {
+  padding: $spacing-4 $spacing-3;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-1;
+}
+
+.navItem {
+  display: block;
+  padding: $spacing-2 $spacing-3;
+  border-radius: $radius-md;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-gray-300;
+  white-space: nowrap;
+  transition: background-color 0.15s, color 0.15s;
+
+  &:hover {
+    background-color: $color-gray-700;
+    color: $color-white;
+  }
+}
+
+.active {
+  background-color: $color-primary-600;
+  color: $color-white;
+
+  &:hover {
+    background-color: $color-primary-700;
+  }
+}

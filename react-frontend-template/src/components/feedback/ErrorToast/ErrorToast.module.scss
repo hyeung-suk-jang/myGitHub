@@ -1,0 +1,54 @@
+@use '@/styles/variables/colors' as *;
+@use '@/styles/variables/spacing' as *;
+@use '@/styles/variables/zindex' as *;
+@use '@/styles/mixins/flex' as *;
+
+.container {
+  position: fixed;
+  bottom: $spacing-6;
+  right: $spacing-6;
+  z-index: $z-index-toast;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+  max-width: 360px;
+}
+
+.toast {
+  @include flex-between;
+  gap: $spacing-3;
+  padding: $spacing-3 $spacing-4;
+  border-radius: $radius-md;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: slideIn 0.25s ease-out;
+  min-width: 280px;
+}
+
+.error   { background-color: #fee2e2; border-left: 4px solid $color-error; }
+.success { background-color: #dcfce7; border-left: 4px solid $color-success; }
+.warning { background-color: #fef9c3; border-left: 4px solid $color-warning; }
+.info    { background-color: #dbeafe; border-left: 4px solid $color-info; }
+
+.message {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  flex: 1;
+}
+
+.closeBtn {
+  @include flex-center;
+  width: 20px;
+  height: 20px;
+  border-radius: $radius-sm;
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+  cursor: pointer;
+  flex-shrink: 0;
+
+  &:hover { background-color: rgba(0, 0, 0, 0.08); }
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
